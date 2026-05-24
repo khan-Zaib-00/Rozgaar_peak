@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Professional Recruitment | {{ 'Edit Job' if job else 'Post New Job' }} | RozgaarSphere{% endblock %}
+{% block content %}
+<div class="animate-fade-in" style="max-width:900px; margin: 0 auto; padding-bottom: 4rem;">
+    <!-- Header Section -->
+    <div class="card card-linkedin p-4 mb-3" style="border-radius: 12px; background: white;">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width: 64px; height: 64px; background: #e8f3ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--linkedin-blue);">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <div>
+                    <h2 class="mb-0 fw-bold" style="color: #000; font-size: 1.5rem;">{{ 'Edit Job Posting' if job else 'Recruit Top Talent' }}</h2>
+                    <p class="mb-0 text-muted fw-600">
+                        Broadcasting to <span style="color: var(--linkedin-blue)">RozgaarSphere</span> Network
+                    </p>
+                </div>
+            </div>
+            <a href="{{ url_for('employer.employer_dashboard') }}" class="btn-linkedin-outline"><i class="fa-solid fa-arrow-left me-1"></i> Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Job Posting Form -->
+    <div class="card card-linkedin shadow-pro" style="border-radius: 12px; background: white; border: none; overflow: hidden;">
+        <div class="p-4 border-bottom bg-light d-flex align-items-center gap-2">
+            <i class="fa-solid fa-plus-circle text-primary"></i>
+            <h5 class="mb-0 fw-bold">Job Specification Details</h5>
+        </div>
+
+        <form method="POST" class="p-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <!-- Section: Basic Information -->
+            <div class="row mb-4">
+                <div class="col-12 mb-3">
+                    <h6 class="fw-bold text-uppercase small text-primary" style="letter-spacing: 1px;"><i class="fa-solid fa-info-circle me-2"></i> Role Identification</h6>
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label class="form-label small fw-bold">Job Title <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fa-solid fa-briefcase text-muted"></i></span>
+                        <input type="text" name="title" class="form-control" value="{{ job.title if job else '' }}" placeholder="e.g. Senior Full Stack Developer" required>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label small fw-bold">Job Category <span class="text-danger">*</span></label>
+                    <select name="category" class="form-control" required>
+                        <option value="Technology" {% if job and job.category == 'Technology' %}selected{% endif %}>Technology</option>
+                        <option value="Marketing" {% if job and job.category == 'Marketing' %}selected{% endif %}>Marketing</option>
+                        <option value="Sales" {% if job and job.category == 'Sales' %}selected{% endif %}>Sales</option>
+                        <option value="Design" {% if job and job.category == 'Design' %}selected{% endif %}>Design</option>
+                        <option value="Finance" {% if job and job.category == 'Finance' %}selected{% endif %}>Finance</option>
+                        <option value="HR" {% if job and job.category == 'HR' %}selected{% endif %}>HR / Admin</option>
+                        <option value="Other" {% if job and job.category == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section: Description -->
+            <div class="row mb-4">
+                <div class="col-12 mb-3">
+                    <h6 class="fw-bold text-uppercase small text-primary" style="letter-spacing: 1px;"><i class="fa-solid fa-align-left me-2"></i> Requirements & Scope</h6>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small fw-bold">Job Description <span class="text-danger">*</span></label>
+                    <textarea name="description" class="form-control" rows="8" placeholder="Outline the responsibilities, required skills, and benefits..." required>{{ job.description if job else '' }}</textarea>
+                    <p class="extra-small text-muted mt-1"><i class="fa-solid fa-lightbulb me-1"></i> Tip: Use bullet points for better readability.</p>
+                </div>
+            </div>
+
+            <!-- Section: Logistics & Compensation -->
+            <div class="row mb-5">
+                <div class="col-12 mb-3">
+                    <h6 class="fw-bold text-uppercase small text-primary" style="letter-spacing: 1px;"><i class="fa-solid fa-coins me-2"></i> Logistics & Compensation</h6>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label small fw-bold">Work Location <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fa-solid fa-location-dot text-muted"></i></span>
+                        <input type="text" name="location" class="form-control" value="{{ job.location if job else '' }}" placeholder="e.g. Karachi / Remote" required>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label small fw-bold">Job Type <span class="text-danger">*</span></label>
+                    <select name="job_type" class="form-control" required>
+                        <option value="full-time" {% if job and job.job_type == 'full-time' %}selected{% endif %}>Full-Time</option>
+                        <option value="part-time" {% if job and job.job_type == 'part-time' %}selected{% endif %}>Part-Time</option>
+                        <option value="remote" {% if job and job.job_type == 'remote' %}selected{% endif %}>Remote / Flex</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label small fw-bold">Monthly Budget (PKR)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fa-solid fa-money-bill-wave text-muted"></i></span>
+                        <input type="number" name="salary" class="form-control" value="{{ job.salary if job else '' }}" step="0.01" placeholder="e.g. 150000">
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-linkedin-primary px-5 py-3 shadow-sm" style="font-size: 1.1rem; min-width: 250px;">
+                    <i class="fa-solid fa-paper-plane me-2"></i> {{ 'Save Changes' if job else 'Publish Job Opportunity' }}
+                </button>
+                <div class="mt-3">
+                    <a href="{{ url_for('employer.employer_dashboard') }}" class="text-muted small">Discard and Return</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .shadow-pro { box-shadow: 0 12px 24px rgba(0,0,0,0.05); }
+    .form-label { color: #555; }
+    .input-group-text { border-right: none; }
+    .form-control:focus { border-color: #0a66c2; box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1); }
+    .input-group .form-control { border-left: none; }
+</style>
+{% endblock %}

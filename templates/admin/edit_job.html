@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Edit Listing | RozgaarSphere Admin{% endblock %}
+{% block content %}
+<div class="animate-fade-in" style="max-width:900px; margin: 0 auto; padding-bottom: 4rem;">
+    <!-- Header Section -->
+    <div class="card shadow-pro mb-4" style="border-radius: 12px; border: none; background: white;">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width: 54px; height: 54px; background: #eef1fd; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #0a66c2;">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                    <div>
+                        <h2 class="mb-0 fw-bold" style="color: #000; font-size: 1.4rem;">Modify Opportunity</h2>
+                        <p class="mb-0 text-muted small">Update the parameters of this job listing at a global system level.</p>
+                    </div>
+                </div>
+                <a href="{{ url_for('admin.manage_jobs') }}" class="btn-linkedin-outline"><i class="fa-solid fa-arrow-left me-1"></i> Back to Jobs</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Form Card -->
+    <div class="card shadow-pro border-0" style="border-radius: 12px; background: white;">
+        <div class="card-body p-5">
+            <form action="{{ url_for('admin.edit_job', job_id=job.id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="row g-4">
+                    <!-- Title -->
+                    <div class="col-12">
+                        <label class="form-label small fw-bold text-uppercase" style="letter-spacing: 0.5px; color: #666;">Job Title</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><i class="fa-solid fa-tag text-muted"></i></span>
+                            <input type="text" name="title" class="form-control border-0 bg-light px-3" value="{{ job.title }}" placeholder="e.g. Senior Software Engineer" required>
+                        </div>
+                    </div>
+
+                    <!-- Category & Type -->
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-uppercase" style="letter-spacing: 0.5px; color: #666;">Category</label>
+                        <select name="category" class="form-select border-0 bg-light px-3" required>
+                            <option value="Technology" {% if job.category == 'Technology' %}selected{% endif %}>Technology</option>
+                            <option value="Finance" {% if job.category == 'Finance' %}selected{% endif %}>Finance</option>
+                            <option value="Sales" {% if job.category == 'Sales' %}selected{% endif %}>Sales</option>
+                            <option value="Marketing" {% if job.category == 'Marketing' %}selected{% endif %}>Marketing</option>
+                            <option value="Admin" {% if job.category == 'Admin' %}selected{% endif %}>Admin</option>
+                            <option value="Human Resources" {% if job.category == 'Human Resources' %}selected{% endif %}>Human Resources</option>
+                            <option value="Customer Support" {% if job.category == 'Customer Support' %}selected{% endif %}>Customer Support</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-uppercase" style="letter-spacing: 0.5px; color: #666;">Employment Type</label>
+                        <select name="job_type" class="form-select border-0 bg-light px-3" required>
+                            <option value="Full-time" {% if job.job_type == 'Full-time' %}selected{% endif %}>Full-time</option>
+                            <option value="Part-time" {% if job.job_type == 'Part-time' %}selected{% endif %}>Part-time</option>
+                            <option value="Remote" {% if job.job_type == 'Remote' %}selected{% endif %}>Remote</option>
+                            <option value="Contract" {% if job.job_type == 'Contract' %}selected{% endif %}>Contract</option>
+                        </select>
+                    </div>
+
+                    <!-- Salary & Location -->
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-uppercase" style="letter-spacing: 0.5px; color: #666;">Base Compensation</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><i class="fa-solid fa-money-bill-wave text-muted"></i></span>
+                            <input type="text" name="salary" class="form-control border-0 bg-light px-3" value="{{ job.salary }}" placeholder="e.g. 150,000 PKR" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-uppercase" style="letter-spacing: 0.5px; color: #666;">Location</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><i class="fa-solid fa-location-dot text-muted"></i></span>
+                            <input type="text" name="location" class="form-control border-0 bg-light px-3" value="{{ job.location }}" placeholder="e.g. Karachi / Remote" required>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-12">
+                        <label class="form-label small fw-bold text-uppercase" style="letter-spacing: 0.5px; color: #666;">Listing Description</label>
+                        <textarea name="description" class="form-control border-0 bg-light p-3" rows="8" placeholder="Enter detailed job description and requirements..." required>{{ job.description }}</textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="col-12 mt-4 pt-3 border-top">
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-linkedin-primary flex-grow-1 py-2 fw-bold shadow-sm">
+                                <i class="fa-solid fa-circle-check me-2"></i> Commit Updates
+                            </button>
+                            <a href="{{ url_for('admin.manage_jobs') }}" class="btn btn-light border flex-grow-1 py-2 fw-bold text-muted">
+                                Discard Changes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .shadow-pro { box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .form-control:focus, .form-select:focus { background-color: #fff !important; box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1) !important; color: #333; }
+    .btn-linkedin-primary { background-color: #0a66c2; border-color: #0a66c2; color: #fff; border-radius: 24px; padding: 0.6rem 1.5rem; }
+    .btn-linkedin-primary:hover { background-color: #004182; border-color: #004182; color: #fff; }
+</style>
+{% endblock %}

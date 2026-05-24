@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Sign In | RozgaarSphere{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5 mb-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card-linkedin p-4 shadow-sm">
+            <div class="text-start mb-4">
+                <h1 class="fw-bold h2 mb-1">Sign in</h1>
+                <p class="text-muted">Stay updated on your professional world</p>
+            </div>
+            
+            <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">Email</label>
+                    <input type="email" name="email" class="form-control py-2" placeholder="Email address" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-muted">Password</label>
+                    <input type="password" name="password" class="form-control py-2" placeholder="Password" required>
+                </div>
+                
+                <div class="mb-3">
+                    <a href="#" class="text-decoration-none fw-bold" style="color: #0a66c2; font-size: 0.95rem;">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-linkedin-primary w-100 py-2 mb-4">Sign in</button>
+            </form>
+            
+            <div class="text-center">
+                <div class="position-relative mb-4">
+                    <hr class="text-muted">
+                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-2 small text-muted">or</span>
+                </div>
+                <p class="text-muted small">New to RozgaarSphere? <a href="{{ url_for('auth.signup') }}" class="text-decoration-none fw-bold" style="color: #0a66c2;">Join now</a></p>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <p class="small text-muted">Looking to post a job? <a href="{{ url_for('auth.signup') }}" class="text-decoration-none fw-bold" style="color: #0a66c2;">Create an employer account</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        border-color: #0a66c2;
+        box-shadow: 0 0 0 0.2rem rgba(10, 102, 194, 0.25);
+    }
+</style>
+{% endblock %}

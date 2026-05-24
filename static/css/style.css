@@ -1,0 +1,326 @@
+:root {
+  /* Common Values */
+  --linkedin-blue: #0a66c2;
+  --linkedin-blue-hover: #004182;
+  --success: #057642;
+  --danger: #d11124;
+  --warning: #f59e0b;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 35px;
+  --transition-fast: 0.2s ease-in-out;
+  --transition-med: 0.3s ease-in-out;
+
+  /* Light Theme (Default) */
+  --bg-body: #f3f2ef;
+  --bg-card: #ffffff;
+  --bg-navbar: #ffffff;
+  --bg-input: #edf3f8;
+  --bg-hover: #ebebeb;
+  --border-color: rgba(0,0,0,0.08);
+  --text-primary: rgba(0,0,0,0.9);
+  --text-secondary: rgba(0,0,0,0.6);
+  --text-muted: rgba(0,0,0,0.5);
+  --shadow-sm: 0 0 0 1px var(--border-color);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme="dark"] {
+  --bg-body: #1d2226;
+  --bg-card: #1b1f23;
+  --bg-navbar: #1b1f23;
+  --bg-input: #293138;
+  --bg-hover: #293138;
+  --border-color: rgba(255,255,255,0.1);
+  --text-primary: rgba(255,255,255,0.9);
+  --text-secondary: rgba(255,255,255,0.6);
+  --text-muted: rgba(255,255,255,0.5);
+  --shadow-sm: 0 0 10px rgba(0,0,0,0.3), 0 0 0 1px var(--border-color);
+  --white: #1b1f23;
+  --glass-bg: rgba(27, 31, 35, 0.7);
+}
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-body); }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* Layout & Components */
+.card-linkedin, .card-feed {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 0.75rem;
+  /* Enforce visible overflow to prevent profile avatar and other elements from being clipped */
+  overflow: visible !important;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.card-linkedin:hover, .card-feed:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card-feed {
+    padding: 1rem;
+}
+
+/* Post Placeholder (LinkedIn-style "Start a post") */
+.post-placeholder {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.post-avatar-mini {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-input-mock {
+    flex-grow: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 35px;
+    padding: 10px 16px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.post-input-mock:hover {
+    background: var(--bg-hover);
+}
+
+.job-feed-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition-fast);
+  text-decoration: none;
+  color: inherit;
+}
+
+.job-feed-item:last-child { border-bottom: none; }
+.job-feed-item:hover { background-color: var(--bg-hover); }
+
+.job-feed-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  background: #f3f6f8;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--linkedin-blue);
+}
+
+.job-feed-info { flex-grow: 1; }
+
+.job-feed-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--linkedin-blue);
+  margin-bottom: 0px;
+  text-decoration: none;
+}
+
+.job-feed-title:hover { text-decoration: underline; }
+
+.job-feed-company { font-size: 0.75rem; color: var(--text-primary); margin-bottom: 2px; }
+.job-feed-location { font-size: 0.75rem; color: var(--text-secondary); }
+
+/* Badges */
+.badge-ft, .badge-remote {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.badge-ft { background: #e7f6f8; color: #0073b1; }
+.badge-remote { background: #fee2e2; color: #991b1b; }
+
+/* Buttons */
+
+.btn-linkedin-primary {
+  background: var(--linkedin-blue);
+  color: #fff;
+  border-radius: 24px;
+  font-weight: 600;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  border: none;
+  transition: background var(--transition-fast);
+}
+
+.btn-linkedin-primary:hover { background: var(--linkedin-blue-hover); color: #fff; }
+
+.btn-linkedin-outline {
+  color: var(--linkedin-blue);
+  border: 1px solid var(--linkedin-blue);
+  border-radius: 24px;
+  font-weight: 600;
+  padding: 4px 16px;
+  font-size: 0.875rem;
+  transition: all var(--transition-fast);
+  background: transparent;
+}
+
+.btn-linkedin-outline:hover { background: rgba(10, 102, 194, 0.05); }
+
+/* Stepper / Timeline */
+.stepper-progress {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.stepper-progress::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--border-color);
+  z-index: 1;
+}
+
+.step-item { position: relative; z-index: 2; text-align: center; flex: 1; }
+.step-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: all var(--transition-med);
+}
+
+.step-completed .step-icon {
+  background: var(--linkedin-blue);
+  border-color: var(--linkedin-blue);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1);
+}
+
+.step-active .step-icon {
+  border-color: var(--linkedin-blue);
+  color: var(--linkedin-blue);
+  border-width: 3px;
+}
+
+.step-rejected .step-icon {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+.step-label { font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); }
+.step-completed .step-label { color: var(--linkedin-blue); }
+
+/* Compatibility Score Widget */
+.compatibility-pill {
+    background: linear-gradient(90deg, #0a66c2, #004182);
+    color: white;
+    padding: 2px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.skill-match-tag {
+    background: #e7f3ff;
+    color: #0a66c2;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+/* Utils */
+.text-muted { color: var(--text-muted) !important; }
+.extra-small { font-size: 0.75rem; }
+.transition-2 { transition: all var(--transition-fast); }
+.hover-bg-gray:hover { background-color: var(--bg-hover) !important; }
+
+.grid { display: grid; gap: 1rem; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+.flex { display: flex; align-items: center; }
+.flex-column { flex-direction: column; }
+.space-between { justify-content: space-between; }
+.gap-1 { gap: 0.5rem; }
+.gap-2 { gap: 1rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+
+/* Dashboard Stepper Border Fix */
+.border-start-pro { border-left: 5px solid var(--linkedin-blue); }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Hero Section */
+.hero-gradient {
+  background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
+  color: white;
+  padding: 4rem 2rem;
+  border-radius: var(--radius-lg);
+  margin-bottom: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(10, 102, 194, 0.2);
+}
+
+/* Glassmorphism */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}

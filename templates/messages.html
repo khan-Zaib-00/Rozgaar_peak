@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Messaging | RozgaarSphere{% endblock %}
+{% block content %}
+<div class="card-linkedin p-0" style="height: calc(100vh - 120px); display: flex;">
+    <!-- Contacts Sidebar -->
+    <div style="width: 260px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column;" class="d-none d-md-flex">
+        <div class="p-3 border-bottom">
+            <h6 class="fw-bold mb-3 small text-uppercase text-muted">Messaging</h6>
+            <div class="input-group input-group-sm">
+                <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-search text-muted" style="font-size: 0.7rem;"></i></span>
+                <input type="text" id="contact-search" class="form-control bg-light border-start-0" placeholder="Search contacts..." style="font-size: 0.75rem;">
+            </div>
+        </div>
+        <div id="contact-list" style="flex-grow: 1; overflow-y: auto;">
+            {% if contacts %}
+                {% for contact in contacts %}
+                <a href="{{ url_for('messages.inbox', user_id=contact.id, job_id=contact.job_id) }}" class="text-decoration-none">
+                    <div class="p-3 d-flex align-items-center gap-3 hover-bg-gray {{ 'bg-hover' if selected_user and selected_user.id == contact.id and selected_job and selected_job.id == contact.job_id else '' }}" style="border-bottom: 1px solid var(--border-color);">
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width: 40px; height: 40px; border-radius: 50%;">
+                        <div class="text-truncate">
+                            <div class="fw-600 small text-primary">{{ contact.name }}</div>
+                            <div class="extra-small text-dark fw-bold text-truncate" style="max-width: 150px;">{{ contact.job_title }}</div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="p-4 text-center text-muted extra-small">
+                    <i class="fa-solid fa-message mb-2 d-block opacity-25" style="font-size: 2rem;"></i>
+                    No recent chats.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div style="flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-card);">
+        {% if selected_user %}
+            <div class="p-3 border-bottom d-flex align-items-center justify-content-between glass-card">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" style="width: 38px; height: 38px; border-radius: 50%;">
+                    <div>
+                        <h6 class="fw-bold mb-0 text-primary">{{ selected_user.name }}</h6>
+                        <div class="extra-small text-muted fw-bold">{{ selected_job.title if selected_job else 'General Inquiry' }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="chat-box" class="p-4" style="flex-grow: 1; overflow-y: auto;">
+                {% if chat_messages %}
+                    {% for msg in chat_messages %}
+                        <div class="d-flex {{ 'justify-content-end' if msg.sender_id == session['user_id'] else 'justify-content-start' }} mb-3">
+                            <div class="p-2 px-3 rounded-pill shadow-sm" style="max-width: 75%; {{ 'background-color: var(--linkedin-blue); color: white;' if msg.sender_id == session['user_id'] else 'background-color: var(--bg-hover); color: var(--text-primary);' }}">
+                                <div class="small">{{ msg.content }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+                        <i class="fa-solid fa-hand-wave mb-2 text-primary"></i>
+                        <p class="small">Say hi to start the conversation!</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="p-3 border-top">
+                <div class="d-flex gap-2 align-items-center">
+                    <textarea id="msg-content" class="form-control border-0 bg-hover" placeholder="Type a message..." rows="1" style="resize: none; border-radius: var(--radius-pill); padding: 10px 20px; color: var(--text-primary);"></textarea>
+                    <button id="send-btn" class="btn btn-linkedin-primary rounded-circle" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        {% else %}
+            <div class="h-100 d-flex flex-column align-items-center justify-content-center text-muted p-5 text-center">
+                <div class="hero-gradient rounded-circle p-4 mb-4" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-paper-plane" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold text-primary">Your Inbox</h5>
+                <p class="small text-muted">Send and receive messages to land your dream job faster.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatBox = document.getElementById('chat-box');
+        const sendBtn = document.getElementById('send-btn');
+        const msgInput = document.getElementById('msg-content');
+        const receiverId = {{ selected_user.id if selected_user else 'null' }};
+        const currentJobId = {{ selected_job.id if selected_job else 'null' }};
+        const currentUserId = {{ session['user_id'] }};
+
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        if (sendBtn && receiverId) {
+            const sendMessage = () => {
+                const content = msgInput.value.trim();
+                if (content && socket) {
+                    socket.emit('send_msg', {
+                        receiver_id: receiverId,
+                        job_id: currentJobId,
+                        content: content
+                    });
+                    msgInput.value = '';
+                }
+            };
+
+            sendBtn.addEventListener('click', sendMessage);
+            msgInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Listen for new messages
+            socket.on('new_msg', (data) => {
+                // If the message belongs to the current open chat AND job thread
+                if ((data.sender_id == receiverId || data.sender_id == currentUserId) && data.job_id == currentJobId) {
+                    const isMine = data.sender_id == currentUserId;
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `d-flex ${isMine ? 'justify-content-end' : 'justify-content-start'} mb-3 animate-fade-in`;
+                    msgDiv.innerHTML = `
+                        <div class="p-2 px-3 rounded-pill shadow-sm" style="max-width: 75%; ${isMine ? 'background-color: var(--linkedin-blue); color: white;' : 'background-color: var(--bg-hover); color: var(--text-primary);'}">
+                            <div class="small">${data.content}</div>
+                        </div>
+                    `;
+                    chatBox.appendChild(msgDiv);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            });
+        }
+
+        // Contact Search Filter
+        const contactSearch = document.getElementById('contact-search');
+        if (contactSearch) {
+            contactSearch.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase();
+                const contacts = document.querySelectorAll('#contact-list .text-decoration-none');
+                
+                contacts.forEach(contact => {
+                    const name = contact.querySelector('.fw-600').innerText.toLowerCase();
+                    if (name.includes(term)) {
+                        contact.style.display = 'block';
+                    } else {
+                        contact.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+</script>
+
+<style>
+    .border-color { border-color: var(--border-color) !important; }
+    textarea:focus { box-shadow: none !important; }
+</style>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Jobs | RozgaarSphere{% endblock %}
+{% block content %}
+
+<div class="card-linkedin p-3 mb-3">
+    <form method="GET" action="{{ url_for('jobs.list_jobs') }}" class="row g-2">
+        <div class="col-md-4">
+            <div class="input-group input-group-sm">
+                <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-search text-muted"></i></span>
+                <input type="text" name="keyword" class="form-control border-start-0" value="{{ keyword }}" placeholder="Job title or skills...">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select name="location" class="form-select form-select-sm">
+                <option value="">All Locations</option>
+                {% for loc in locations %}
+                    <option value="{{ loc }}" {% if loc == selected_location %}selected{% endif %}>{{ loc }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="job_type" class="form-select form-select-sm">
+                <option value="">All Types</option>
+                <option value="full-time" {% if selected_job_type == 'full-time' %}selected{% endif %}>Full-time</option>
+                <option value="part-time" {% if selected_job_type == 'part-time' %}selected{% endif %}>Part-time</option>
+                <option value="remote" {% if selected_job_type == 'remote' %}selected{% endif %}>Remote</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="min_salary" class="form-control form-control-sm" value="{{ min_salary }}" placeholder="Min Salary (PKR)">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-linkedin-primary btn-sm w-100"><i class="fa-solid fa-filter"></i></button>
+        </div>
+    </form>
+</div>
+
+<div class="card-feed">
+    <h6 class="fw-bold mb-3">Job Search Results</h6>
+    
+    {% if jobs %}
+        {% for job in jobs %}
+        <div class="job-feed-item">
+            <div class="job-feed-logo text-center d-flex align-items-center justify-content-center" style="background:#f3f6f8; font-size: 1.5rem; color: #0a66c2;">
+                <i class="fa-solid fa-building"></i>
+            </div>
+            <div class="job-feed-info">
+                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="job-feed-title">{{ job.title }}</a>
+                <div class="job-feed-company">{{ job.company_name }}</div>
+                <div class="job-feed-location text-muted small">{{ job.location }} &bull; {{ job.job_type.replace('-', ' ') | title }}</div>
+                
+                {% if job.salary %}
+                <div class="mt-1 small fw-bold text-success">
+                    PKR {{ "{:,.0f}".format(job.salary|float) }} / month
+                </div>
+                {% endif %}
+                
+                <div class="mt-2">
+                    <span class="badge-remote"><i class="fa-solid fa-bolt"></i> Easy Apply</span>
+                    <span class="ms-2 extra-small text-muted">Promoted</span>
+                </div>
+            </div>
+            <div class="d-flex flex-column gap-2">
+                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="btn-linkedin-outline">Details</a>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Pagination Controls -->
+        {% if total_pages > 1 %}
+        <nav aria-label="Job pagination" class="mt-4">
+            <ul class="pagination pagination-sm justify-content-center">
+                <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('jobs.list_jobs', page=page-1, keyword=keyword, location=selected_location, min_salary=min_salary, job_type=selected_job_type) }}" tabindex="-1">Previous</a>
+                </li>
+                
+                {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if page == p %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('jobs.list_jobs', page=p, keyword=keyword, location=selected_location, min_salary=min_salary, job_type=selected_job_type) }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+                
+                <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('jobs.list_jobs', page=page+1, keyword=keyword, location=selected_location, min_salary=min_salary, job_type=selected_job_type) }}">Next</a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fa-solid fa-magnifying-glass text-muted mb-3" style="font-size: 3rem;"></i>
+            <h6 class="text-muted">No jobs match your search.</h6>
+            <p class="small text-muted">Try different keywords or locations.</p>
+            <a href="{{ url_for('jobs.list_jobs') }}" class="btn btn-outline-secondary btn-sm">Clear Filters</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; }
+    .form-select-sm, .form-control-sm { font-size: 0.8rem; }
+</style>
+
+{% endblock %}

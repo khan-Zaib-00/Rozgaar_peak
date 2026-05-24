@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Master Control Panel | RozgaarSphere{% endblock %}
+{% block content %}
+<div class="animate-fade-in" style="max-width:1100px; margin: 0 auto; padding-bottom: 4rem;">
+    <!-- Admin Header -->
+    <div class="card shadow-pro mb-4" style="border-radius: 12px; border: none; background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);">
+        <div class="card-body p-4 text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold mb-1"><i class="fa-solid fa-shield-halved me-2"></i> Master Admin Terminal</h2>
+                    <p class="mb-0 opacity-75">Global oversight and platform governance for RozgaarSphere.</p>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold shadow-sm">SYSTEM STATUS: ACTIVE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Matrix -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card card-linkedin h-100 shadow-pro border-0" style="border-radius: 12px;">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-3 bg-light-primary p-3 rounded-circle d-inline-block">
+                        <i class="fa-solid fa-users text-primary fs-3"></i>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ stats.total_users }}</h2>
+                    <p class="text-muted small fw-bold text-uppercase mb-0">Total Accounts</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-linkedin h-100 shadow-pro border-0" style="border-radius: 12px;">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-3 bg-light-success p-3 rounded-circle d-inline-block">
+                        <i class="fa-solid fa-briefcase text-success fs-3"></i>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ stats.total_jobs }}</h2>
+                    <p class="text-muted small fw-bold text-uppercase mb-0">Live Opportunities</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-linkedin h-100 shadow-pro border-0" style="border-radius: 12px;">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-3 bg-light-warning p-3 rounded-circle d-inline-block">
+                        <i class="fa-solid fa-building text-warning fs-3"></i>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ stats.total_companies }}</h2>
+                    <p class="text-muted small fw-bold text-uppercase mb-0">Partner Firms</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-linkedin h-100 shadow-pro border-0" style="border-radius: 12px;">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-3 bg-light-danger p-3 rounded-circle d-inline-block">
+                        <i class="fa-solid fa-file-invoice text-danger fs-3"></i>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ stats.total_applications }}</h2>
+                    <p class="text-muted small fw-bold text-uppercase mb-0">Total Submissions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Management Modules -->
+    <div class="row g-4">
+        <!-- Quick Management Links -->
+        <div class="col-lg-4">
+            <div class="card shadow-pro border-0 h-100" style="border-radius: 12px; background: white;">
+                <div class="p-4 border-bottom">
+                    <h6 class="fw-bold mb-0 text-uppercase small text-primary"><i class="fa-solid fa-sliders me-2"></i> Command Center</h6>
+                </div>
+                <div class="p-3">
+                    <a href="{{ url_for('admin.manage_users') }}" class="admin-nav-item d-flex align-items-center gap-3 p-3 text-decoration-none rounded-3 mb-2">
+                        <div class="icon-box"><i class="fa-solid fa-user-gear"></i></div>
+                        <div>
+                            <div class="fw-bold text-dark">User Governance</div>
+                            <div class="extra-small text-muted">Manage seeker & employer accounts</div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('admin.manage_jobs') }}" class="admin-nav-item d-flex align-items-center gap-3 p-3 text-decoration-none rounded-3 mb-2">
+                        <div class="icon-box bg-success-light text-success"><i class="fa-solid fa-briefcase"></i></div>
+                        <div>
+                            <div class="fw-bold text-dark">Job Oversight</div>
+                            <div class="extra-small text-muted">Edit or remove any listing</div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('admin.manage_applications') }}" class="admin-nav-item d-flex align-items-center gap-3 p-3 text-decoration-none rounded-3 mb-2">
+                        <div class="icon-box bg-danger-light text-danger"><i class="fa-solid fa-file-lines"></i></div>
+                        <div>
+                            <div class="fw-bold text-dark">Submission Tracking</div>
+                            <div class="extra-small text-muted">View all platform applications</div>
+                        </div>
+                    </a>
+                    <hr class="my-2 border-color">
+                    <div class="px-2">
+                        <p class="extra-small text-muted fw-bold text-uppercase mb-2">Data Intelligence</p>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('admin.export_users') }}" class="btn btn-outline-primary btn-sm flex-grow-1 extra-small fw-bold"><i class="fa-solid fa-download me-1"></i> Export Users</a>
+                            <a href="{{ url_for('admin.export_jobs') }}" class="btn btn-outline-success btn-sm flex-grow-1 extra-small fw-bold"><i class="fa-solid fa-file-csv me-1"></i> Export Jobs</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Feed -->
+        <div class="col-lg-8">
+            <div class="card shadow-pro border-0 h-100" style="border-radius: 12px; background: white;">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-uppercase small text-primary"><i class="fa-solid fa-bolt me-2"></i> Recent Platform Activity</h6>
+                    <span class="extra-small text-muted">Showing last 5 entries</span>
+                </div>
+                <div class="p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4 py-3 border-0">Entity</th>
+                                    <th class="py-3 border-0">Activity type</th>
+                                    <th class="py-3 border-0 text-end pe-4">System ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in recent_users %}
+                                <tr>
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="avatar-xs rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                                <i class="fa-solid fa-user text-muted" style="font-size: 0.7rem;"></i>
+                                            </div>
+                                            <span class="fw-bold">{{ user.name }}</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-soft-primary text-primary">New User Joined</span></td>
+                                    <td class="text-end pe-4 text-muted extra-small">USR-{{ user.id }}</td>
+                                </tr>
+                                {% endfor %}
+                                {% for job in recent_jobs %}
+                                <tr>
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="avatar-xs rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                                <i class="fa-solid fa-briefcase text-muted" style="font-size: 0.7rem;"></i>
+                                            </div>
+                                            <span class="fw-bold">{{ job.title }}</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-soft-success text-success">New Job Posted</span></td>
+                                    <td class="text-end pe-4 text-muted extra-small">JOB-{{ job.id }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .shadow-pro { box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .bg-light-primary { background: #eef1fd; }
+    .bg-light-success { background: #e7f6f8; }
+    .bg-light-warning { background: #fff8e6; }
+    .bg-light-danger { background: #ffeef2; }
+    .bg-soft-primary { background: #eef1fd; color: #0a66c2; }
+    .bg-soft-success { background: #e7f6f8; color: #057642; }
+    .admin-nav-item { transition: 0.2s; background: #f9fafb; border: 1px solid #f3f4f6; }
+    .admin-nav-item:hover { background: #fff; border-color: #0a66c2; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transform: translateY(-2px); }
+    .icon-box { width: 44px; height: 44px; background: #eef1fd; color: #0a66c2; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .bg-success-light { background: #e7f6f8; }
+    .bg-danger-light { background: #ffeef2; }
+</style>
+{% endblock %}

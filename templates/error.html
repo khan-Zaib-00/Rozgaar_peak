@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}System Error | RozgaarSphere{% endblock %}
+{% block content %}
+<div class="card card-center error-slate" style="margin-top: 5rem;">
+    <i class="fa-solid fa-server"></i>
+    <h2>Database Offline</h2>
+    <p>{{ message | default("We are currently experiencing technical difficulties with our database. Please make sure your local database server (XAMPP/MySQL) is running.") }}</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary" style="margin-top: 2rem;">
+        <i class="fa-solid fa-rotate-right"></i> Try Again
+    </a>
+</div>
+{% endblock %}

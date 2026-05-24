@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Applicants - {{ job.title }}{% endblock %}
+{% block content %}
+<div class="flex space-between mb-2">
+    <div>
+        <h2>Applicants for: <span style="color:var(--primary)">{{ job.title }}</span></h2>
+    </div>
+    <a href="{{ url_for('employer.employer_dashboard') }}" class="btn btn-secondary btn-sm"><i class="fa-solid fa-arrow-left" style="margin-right:0.5rem"></i> Dashboard</a>
+</div>
+
+<div class="card">
+    {% if applicants %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Candidate Name</th>
+                        <th>Contact</th>
+                        <th>Skills</th>
+                        <th>Experience</th>
+                        <th>CV</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in applicants %}
+                    <tr>
+                        <td style="font-weight:600;">
+                            {{ p.name }}<br>
+                            <span class="text-muted" style="font-size:0.8rem; font-weight:400;"><i class="fa-solid fa-phone"></i> {{ p.phone or 'N/A' }}</span>
+                            <div class="mt-1 d-flex gap-2">
+                                {% if p.linkedin_url %}
+                                <a href="{{ p.linkedin_url }}" target="_blank" class="text-primary" title="LinkedIn Profile"><i class="fa-brands fa-linkedin"></i></a>
+                                {% endif %}
+                                {% if p.portfolio_url %}
+                                <a href="{{ p.portfolio_url }}" target="_blank" class="text-secondary" title="Portfolio Link"><i class="fa-solid fa-globe"></i></a>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td style="font-size:0.875rem">
+                            <a href="mailto:{{ p.email }}">{{ p.email }}</a><br>
+                            <span class="text-muted small"><i class="fa-solid fa-location-arrow me-1"></i>{{ p.current_location or 'N/A' }}</span>
+                        </td>
+                        <td>
+                            <div style="font-size:0.875rem"><strong>Edu:</strong> {{ p.education or 'N/A' }}</div>
+                            <div style="font-size:0.875rem"><strong>Exp:</strong> <span class="badge bg-light text-dark border">{{ p.total_exp or 'N/A' }}</span></div>
+                        </td>
+                        <td>
+                            <div style="font-size:0.875rem"><strong>Salary:</strong> <span class="text-success fw-bold">{{ p.expected_salary or 'N/A' }}</span></div>
+                            <div style="font-size:0.875rem"><strong>Notice:</strong> <span class="badge bg-info text-dark" style="font-size:0.7rem">{{ p.notice_period or 'N/A' }}</span></div>
+                        </td>
+                        <td>
+                            <div style="max-height:80px; overflow-y:auto; font-size:0.8rem; border-left: 2px solid var(--border); padding-left: 0.5rem;">
+                                <strong>Bio:</strong> {{ p.bio or 'N/A' }}<br>
+                                <strong>Exp:</strong> {{ p.experience or 'N/A' }}
+                            </div>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('seeker.download_cv', filename=p.cv_path) }}" target="_blank" class="btn btn-secondary btn-sm" style="white-space:nowrap"><i class="fa-solid fa-file-pdf" style="color:var(--danger);margin-right:0.25rem"></i> CV</a>
+                        </td>
+                        <td>
+                            {% if p.status == 'Applied' %}
+                                <span class="badge" style="background:#fef3c7;color:#92400e">Applied</span>
+                            {% elif p.status == 'Shortlisted' %}
+                                <span class="badge" style="background:#dbeafe;color:#1e40af">Shortlisted</span>
+                            {% elif p.status == 'Interview' %}
+                                <span class="badge" style="background:#fce7f3;color:#be185d">Interview</span>
+                            {% elif p.status == 'Rejected' %}
+                                <span class="badge" style="background:#fee2e2;color:#991b1b">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <form action="{{ url_for('employer.update_status', app_id=p.application_id) }}" method="POST" style="display:inline-block;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <select name="status" onchange="this.form.submit()" style="padding:0.25rem;border-radius:4px;border:1px solid var(--border);font-size:0.875rem;">
+                                        <option value="Applied" {% if p.status == 'Applied' %}selected{% endif %}>Applied</option>
+                                        <option value="Shortlisted" {% if p.status == 'Shortlisted' %}selected{% endif %}>Shortlisted</option>
+                                        <option value="Interview" {% if p.status == 'Interview' %}selected{% endif %}>Interview</option>
+                                        <option value="Rejected" {% if p.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                    </select>
+                                </form>
+                                <a href="{{ url_for('messages.inbox', user_id=p.user_id, job_id=job.id) }}" class="btn btn-primary btn-sm" title="Message Candidate"><i class="fa-solid fa-message"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center" style="padding:2rem;">
+            <i class="fa-solid fa-inbox text-muted mb-1" style="font-size:3rem;"></i>
+            <h3 class="text-muted">No applicants yet</h3>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

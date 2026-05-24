@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Employer Analytics | RozgaarSphere{% endblock %}
+{% block content %}
+
+<div class="flex space-between mb-3">
+    <div>
+        <h2 class="fw-bold mb-0">Platform Analytics</h2>
+        <p class="text-muted small"><i class="fa-solid fa-chart-line text-primary me-2"></i> Real-time candidate data insights</p>
+    </div>
+    <a href="{{ url_for('employer.employer_dashboard') }}" class="btn btn-linkedin-outline"><i class="fa-solid fa-arrow-left me-2"></i> Dashboard</a>
+</div>
+
+{% if no_data %}
+<div class="card-linkedin text-center py-5">
+    <div class="mb-3"><i class="fa-solid fa-chart-pie text-muted" style="font-size: 3rem;"></i></div>
+    <h5 class="text-muted fw-bold">No Data Available</h5>
+    <p class="small text-muted">Post jobs and start receiving applications to see your platform insights.</p>
+</div>
+{% else %}
+
+<!-- Key Metrics -->
+<div class="grid grid-3 mb-3">
+    <div class="card-linkedin p-3" style="border-top: 4px solid var(--linkedin-blue);">
+        <div class="extra-small text-muted fw-bold text-uppercase mb-2">Top Performer</div>
+        <div class="h5 fw-bold mb-1 text-truncate" title="{{ popular_job_title }}">{{ popular_job_title }}</div>
+        <div class="extra-small text-muted">Highest applicant interest</div>
+    </div>
+    <div class="card-linkedin p-3" style="border-top: 4px solid var(--success);">
+        <div class="extra-small text-muted fw-bold text-uppercase mb-2">Total Pool</div>
+        <div class="h4 fw-bold mb-1">{{ total_applicants }}</div>
+        <div class="extra-small text-muted">Candidates in pipeline</div>
+    </div>
+    <div class="card-linkedin p-3" style="border-top: 4px solid var(--warning);">
+        <div class="extra-small text-muted fw-bold text-uppercase mb-2">Active Roles</div>
+        <div class="h4 fw-bold mb-1">{{ apps_per_job | length }}</div>
+        <div class="extra-small text-muted">Open positions</div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-2 mb-3">
+    <div class="card-linkedin p-4">
+        <h6 class="fw-bold mb-4 d-flex align-items-center">
+            <i class="fa-solid fa-chart-simple text-primary me-2"></i> Applications Breakdown
+        </h6>
+        <div style="height: 250px;">
+            <canvas id="jobsBarChart"></canvas>
+        </div>
+    </div>
+    <div class="card-linkedin p-4">
+        <h6 class="fw-bold mb-4 d-flex align-items-center">
+            <i class="fa-solid fa-circle-half-stroke text-primary me-2"></i> Status Distribution
+        </h6>
+        <div style="height: 250px;">
+            <canvas id="statusPieChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-2 mb-3">
+    <!-- Geography: Job Distribution -->
+    <div class="card-linkedin p-4">
+        <h6 class="fw-bold mb-4"><i class="fa-solid fa-briefcase text-primary me-2"></i> Job Distribution</h6>
+        <p class="extra-small text-muted mb-3">Where your open positions are located.</p>
+        <div class="list-group list-group-flush">
+            {% for location, count in job_location_dist.items() %}
+            <div class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-color">
+                <span class="small fw-600"><i class="fa-solid fa-location-dot text-muted me-2"></i> {{ location }}</span>
+                <span class="badge bg-light text-primary border rounded-pill">{{ count }} jobs</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Geography: Candidate Reach -->
+    <div class="card-linkedin p-4">
+        <h6 class="fw-bold mb-4"><i class="fa-solid fa-users-viewfinder text-primary me-2"></i> Candidate Reach</h6>
+        <p class="extra-small text-muted mb-3">Actual candidate locations based on applications.</p>
+        <div class="list-group list-group-flush">
+            {% for location, count in candidate_location_dist.items() %}
+            <div class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-color">
+                <span class="small fw-600"><i class="fa-solid fa-location-pin-lock text-muted me-2"></i> {{ location }}</span>
+                <span class="badge bg-light text-success border rounded-pill">{{ count }} applied</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="card-linkedin p-4 mb-3">
+    <!-- Skills -->
+    <h6 class="fw-bold mb-4"><i class="fa-solid fa-bolt text-primary me-2"></i> Top Applicant Skills</h6>
+    <div class="d-flex flex-wrap gap-2">
+        {% for skill, count in top_skills.items() %}
+        <div class="p-2 border rounded-3 bg-hover d-flex align-items-center gap-2" style="min-width: 100px;">
+            <span class="badge bg-primary rounded-circle">{{ count }}</span>
+            <span class="small fw-600">{{ skill }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#ffffff' : '#000000';
+        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+
+        Chart.defaults.color = textColor;
+        Chart.defaults.font.family = '-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto';
+
+        // Jobs Bar Chart
+        const appsPerJob = {{ apps_per_job|tojson|safe }};
+        new Chart(document.getElementById('jobsBarChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(appsPerJob),
+                datasets: [{
+                    label: 'Applications',
+                    data: Object.values(appsPerJob),
+                    backgroundColor: '#0a66c2',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: gridColor },
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+
+        // Status Pie Chart
+        const statusDist = {{ status_distribution|tojson|safe }};
+        const statusColors = {
+            'Applied': '#f59e0b',
+            'Under Review': '#6366f1',
+            'Shortlisted': '#057642',
+            'Interview': '#ec4899',
+            'Rejected': '#d11124'
+        };
+
+        new Chart(document.getElementById('statusPieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(statusDist),
+                datasets: [{
+                    data: Object.values(statusDist),
+                    backgroundColor: Object.keys(statusDist).map(k => statusColors[k] || '#9ca3af'),
+                    borderWidth: 2,
+                    borderColor: 'transparent'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                },
+                cutout: '70%'
+            }
+        });
+    });
+</script>
+
+<style>
+    .list-group-item { border-color: var(--border-color) !important; color: var(--text-primary); }
+</style>
+
+{% endif %}
+{% endblock %}

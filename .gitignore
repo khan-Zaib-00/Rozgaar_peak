@@ -1,0 +1,20 @@
+# Environment Variables
+.env
+
+# SQLite Database
+job_portal.db
+instance/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# File uploads (optional depending on if we want to track user uploads in Git, but usually ignored)
+static/uploads/*
+!static/uploads/.gitkeep

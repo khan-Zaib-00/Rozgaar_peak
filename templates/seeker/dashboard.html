@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard | RozgaarSphere{% endblock %}
+{% block content %}
+
+<!-- Profile Completion Meter -->
+<div class="card-linkedin p-4 mb-3" style="border-top: 4px solid var(--linkedin-blue); background: var(--bg-body); border-radius: 12px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h6 class="fw-bold mb-1"><i class="fa-solid fa-gauge-high text-primary me-2"></i> Profile Completion Meter</h6>
+            <p class="extra-small text-muted mb-0">Complete your profile to get 5x more visibility from employers.</p>
+        </div>
+        <div class="text-end">
+            <span class="h5 fw-bold text-primary mb-0">{{ completion_percent }}%</span>
+        </div>
+    </div>
+    <div class="progress" style="height: 10px; border-radius: 5px; background: var(--bg-input);">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+             style="width: {{ completion_percent }}%; background: linear-gradient(to right, #0a66c2, #60a5fa); border-radius: 5px;" 
+             aria-valuenow="{{ completion_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    
+    {% if missing_fields %}
+    <div class="mt-3 p-2 bg-light rounded-3 border-start-pro" style="border-left-width: 3px !important; border-left-color: #f59e0b !important;">
+        <div class="extra-small fw-bold text-muted mb-1"><i class="fa-solid fa-lightbulb text-warning me-1"></i> TIP: TO REACH 100%, PLEASE ADD:</div>
+        <div class="d-flex flex-wrap gap-2">
+            {% for field in missing_fields %}
+            <span class="badge bg-white text-muted border extra-small">{{ field | replace('_', ' ') | title }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if completion_percent < 100 %}
+    <div class="mt-3 text-center">
+        <a href="{{ url_for('seeker.seeker_profile') }}" class="btn btn-sm btn-linkedin-outline rounded-pill px-4 extra-small fw-bold shadow-sm">
+            <i class="fa-solid fa-magic-wand-sparkles me-2"></i> Enhance Profile
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Header Stats -->
+<div class="grid grid-3 mb-3">
+    <div class="card-linkedin p-3 text-center">
+        <div class="extra-small text-muted fw-bold mb-1">TOTAL APPLICATIONS</div>
+        <div class="h4 fw-bold mb-0" style="color: var(--linkedin-blue);">{{ applications | length }}</div>
+    </div>
+    <div class="card-linkedin p-3 text-center">
+        <div class="extra-small text-muted fw-bold mb-1">INTERVIEWS</div>
+        {% set interview_count = applications | selectattr('status', 'equalto', 'Interview') | list | length %}
+        <div class="h4 fw-bold mb-0 text-success">{{ interview_count }}</div>
+    </div>
+    <div class="card-linkedin p-3 text-center">
+        <div class="extra-small text-muted fw-bold mb-1">NOTIFICATIONS</div>
+        <div class="h4 fw-bold mb-0 text-warning">{{ unread_count }}</div>
+    </div>
+</div>
+
+<!-- Recommended Jobs Section -->
+{% if recommended_jobs %}
+<div class="card-linkedin p-4 mb-4 glass-card" style="border-left: 5px solid var(--linkedin-blue);">
+    <h6 class="fw-bold mb-4 d-flex align-items-center">
+        <i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i> Sphere Matches For You
+    </h6>
+    <div class="row g-3">
+        {% for info in recommended_jobs %}
+        <div class="col-md-4">
+            <div class="card-linkedin p-3 h-100 d-flex flex-column justify-content-between position-relative">
+                <div class="position-absolute top-0 end-0 p-2">
+                    <span class="compatibility-pill">{{ info.match_percent }}%</span>
+                </div>
+                <div>
+                    <div class="small fw-bold text-truncate pe-5 mb-1" title="{{ info.title }}">{{ info.title }}</div>
+                    <div class="extra-small text-muted mb-2">{{ info.company_name }}</div>
+                    <div class="mt-2 d-flex flex-wrap gap-1">
+                        {% for skill in info.matched_skills_list %}
+                        <span class="skill-match-tag">{{ skill | capitalize }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <a href="{{ url_for('jobs.job_details', job_id=info.id) }}" class="btn btn-linkedin-outline btn-sm w-100 mt-3">View</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Applications Section -->
+<div class="card-linkedin p-4">
+    <h6 class="fw-bold mb-4 d-flex align-items-center">
+        <i class="fa-solid fa-clock-rotate-left me-2 text-secondary"></i> Application Tracking
+    </h6>
+    
+    {% if applications %}
+        {% for app in applications %}
+        <div class="card-linkedin p-4 mb-4 border-start-pro bg-hover transition-2">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h5 class="mb-1 fw-bold">{{ app.title }}</h5>
+                    <div class="text-muted small">
+                        <i class="fa-solid fa-building me-1"></i> {{ app.company_name }} 
+                        <span class="mx-2 opacity-50">|</span>
+                        <i class="fa-solid fa-calendar-check me-1"></i> {{ app.applied_at.strftime('%b %d, %Y') }}
+                    </div>
+                </div>
+                <div class="text-end">
+                    {% set badge_class = 'bg-danger' if app.status == 'Rejected' else ('bg-success' if app.status == 'Shortlisted' else 'bg-primary') %}
+                    <span class="badge {{ badge_class }} px-3 py-2 rounded-pill shadow-sm" style="font-size: 0.7rem;">
+                        {{ app.status }}
+                    </span>
+                    <div class="extra-small text-muted mt-2">Update: {{ app.status_updated_at.strftime('%b %d') }}</div>
+                </div>
+            </div>
+
+            <!-- Enhanced Visual Progress Stepper -->
+            <div class="stepper-progress px-lg-4">
+                {% set states = ['Applied', 'Under Review', 'Interview', 'Shortlisted', 'Rejected'] %}
+                {% set c_idx = states.index(app.status) if app.status in states else 0 %}
+                {% set is_rejected = (app.status == 'Rejected') %}
+                {% set is_shortlisted = (app.status == 'Shortlisted') %}
+                
+                <div class="step-item {% if c_idx >= 0 %}step-completed{% endif %}">
+                    <div class="step-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
+                    <div class="step-label">Applied</div>
+                </div>
+                
+                <div class="step-item {% if c_idx >= 1 %}step-completed{% endif %}">
+                    <div class="step-icon"><i class="fa-solid fa-eye"></i></div>
+                    <div class="step-label">Review</div>
+                </div>
+                
+                <div class="step-item {% if c_idx >= 2 %}step-completed{% endif %}">
+                    <div class="step-icon"><i class="fa-solid fa-user-tie"></i></div>
+                    <div class="step-label">Interview</div>
+                </div>
+                
+                <div class="step-item {% if is_rejected %}step-rejected{% elif is_shortlisted %}step-completed{% endif %}">
+                    <div class="step-icon">
+                        {% if is_rejected %}<i class="fa-solid fa-circle-xmark"></i>
+                        {% elif is_shortlisted %}<i class="fa-solid fa-circle-check"></i>
+                        {% else %}<i class="fa-solid fa-flag-checkered"></i>{% endif %}
+                    </div>
+                    <div class="step-label">Result</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-3 opacity-25"><i class="fa-solid fa-folder-open" style="font-size: 4rem;"></i></div>
+            <h6 class="text-muted fw-bold">No Applications Found</h6>
+            <p class="small text-muted mb-4">You haven't applied to any jobs yet. Your career journey starts here!</p>
+            <a href="{{ url_for('jobs.list_jobs') }}" class="btn btn-linkedin-primary px-4">Browse Jobs</a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

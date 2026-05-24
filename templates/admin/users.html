@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Account Governance | RozgaarSphere{% endblock %}
+{% block content %}
+<div class="animate-fade-in" style="max-width:1000px; margin: 0 auto; padding-bottom: 4rem;">
+    <!-- Header Section -->
+    <div class="card shadow-pro mb-4" style="border-radius: 12px; border: none; background: white;">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width: 54px; height: 54px; background: #eef1fd; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #0a66c2;">
+                        <i class="fa-solid fa-users-gear"></i>
+                    </div>
+                    <div>
+                        <h2 class="mb-0 fw-bold" style="color: #000; font-size: 1.4rem;">Account Governance</h2>
+                        <p class="mb-0 text-muted small">Supervise and manage all registered platform participants.</p>
+                    </div>
+                </div>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn-linkedin-outline"><i class="fa-solid fa-arrow-left me-1"></i> Control Panel</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Table Card -->
+    <div class="card shadow-pro border-0" style="border-radius: 12px; background: white; overflow: hidden;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 border-0 small text-uppercase fw-bold text-muted">User Profile</th>
+                        <th class="py-3 border-0 small text-uppercase fw-bold text-muted">Access Level</th>
+                        <th class="py-3 border-0 small text-uppercase fw-bold text-muted">Contact Info</th>
+                        <th class="py-3 border-0 small text-uppercase fw-bold text-muted text-center">System Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 38px; height: 38px; background: #f3f4f6; color: #666;">
+                                    {{ user.name[0] | upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">{{ user.name }}</div>
+                                    <div class="extra-small text-muted">UID: USR-{{ user.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if user.role == 'admin' %}
+                            <span class="badge bg-soft-danger px-3 py-1 rounded-pill" style="font-size: 0.7rem;">MASTER ADMIN</span>
+                            {% elif user.role == 'employer' %}
+                            <span class="badge bg-soft-primary px-3 py-1 rounded-pill" style="font-size: 0.7rem;">EMPLOYER</span>
+                            {% else %}
+                            <span class="badge bg-soft-success px-3 py-1 rounded-pill" style="font-size: 0.7rem;">JOB SEEKER</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="small fw-600">{{ user.email }}</div>
+                        </td>
+                        <td class="text-center">
+                            {% if user.id != session.get('user_id') %}
+                            <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('CRITICAL ACTION: Are you sure you want to PERMANENTLY delete this user?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-icon-danger" title="Purge Account">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="badge bg-light text-muted fw-bold extra-small border">SELF-ACCOUNT</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .shadow-pro { box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .bg-soft-danger { background: #ffeef2; color: #d11124; }
+    .bg-soft-primary { background: #eef1fd; color: #0a66c2; }
+    .bg-soft-success { background: #e7f6f8; color: #057642; }
+    .btn-icon-danger { width: 34px; height: 34px; border-radius: 8px; border: none; background: #ffeef2; color: #d11124; display: flex; align-items: center; justify-content: center; transition: 0.2s; margin: 0 auto; }
+    .btn-icon-danger:hover { background: #d11124; color: white; transform: scale(1.1); }
+</style>
+{% endblock %}

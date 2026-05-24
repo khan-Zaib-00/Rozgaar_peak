@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Feed | RozgaarSphere{% endblock %}
+{% block content %}
+
+<!-- Hero Section -->
+<div class="hero-gradient mb-3 animate-fade-in">
+    <h1 class="fw-bold mb-2" style="font-size: 2.5rem; letter-spacing: -1px;">Elevate Your Career <br> with <span style="color: #60a5fa;">RozgaarSphere</span></h1>
+    <p class="mb-4" style="font-size: 1.25rem; opacity: 0.9; font-weight: 500;">Pakistan's most professional job portal for elite tech talent.</p>
+    {% if session.get('role') == 'admin' %}
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-light rounded-pill px-5 fw-bold text-danger shadow">
+            <i class="fa-solid fa-gauge-high me-2"></i> Admin Portal
+        </a>
+        <a href="{{ url_for('jobs.list_jobs') }}" class="btn btn-outline-light rounded-pill px-4">Browse Jobs</a>
+    </div>
+    {% elif not session.get('user_id') %}
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{{ url_for('auth.login') }}" class="btn btn-light rounded-pill px-5 fw-bold text-primary shadow">Login Now</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn btn-outline-light rounded-pill px-4 fw-bold">Join Free</a>
+    </div>
+    {% else %}
+    <div class="glass-card d-inline-block px-5 py-2 rounded-pill small fw-bold shadow-sm">
+        Welcome back, {{ session.get('name') }}! 👋
+    </div>
+    {% endif %}
+</div>
+
+<!-- Start a post placeholder -->
+{% if session.get('user_id') %}
+<div class="post-placeholder animate-fade-in" style="animation-delay: 0.1s;">
+    <img src="{{ url_for('static', filename='uploads/' + (session.get('profile_pic', 'default_avatar.png'))) }}" class="post-avatar-mini" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+    <div class="post-input-mock" onclick="location.href='/jobs/'">Start a job search...</div>
+</div>
+{% endif %}
+
+<div class="card-feed animate-fade-in" style="animation-delay: 0.2s;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h6 class="mb-0 fw-bold" style="font-size: 1.1rem; color: var(--text-primary);">Recent Job Postings</h6>
+        <i class="fa-solid fa-ellipsis text-muted" style="cursor: pointer;"></i>
+    </div>
+
+    {% if jobs %}
+        {% for job in jobs %}
+        <div class="job-feed-item">
+            <div class="job-feed-logo">
+                <i class="fa-solid fa-building"></i>
+            </div>
+            <div class="job-feed-info">
+                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="job-feed-title">{{ job.title }}</a>
+                <div class="job-feed-company">{{ job.company.company_name if job.company else 'Tech Dynamics Pakistan' }}</div>
+                <div class="job-feed-location">{{ job.location }} • {{ job.job_type.title() if job.job_type else 'Full-time' }}</div>
+                <div class="mt-2 d-flex gap-2">
+                    <span class="badge-ft"><i class="fa-solid fa-check-circle me-1"></i> Actively recruiting</span>
+                    <span class="badge-remote" style="background: #eef2ff; color: #4338ca;"><i class="fa-solid fa-bolt me-1"></i> Easy Apply</span>
+                </div>
+            </div>
+            <div class="align-self-center">
+                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="btn-linkedin-outline">View Details</a>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="text-center mt-3 pt-2 border-top">
+            <a href="{{ url_for('jobs.list_jobs') }}" class="text-decoration-none fw-bold small" style="color: rgba(0,0,0,0.6);">Show more <i class="fa-solid fa-arrow-right ms-1"></i></a>
+        </div>
+    {% else %}
+        <div class="text-center py-4">
+            <p class="text-muted">No jobs posted yet. Check back soon!</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Hiring Trends / Suggested Section -->
+<div class="card-feed mt-2">
+    <h6 class="fw-bold mb-3">Suggested for you</h6>
+    <div class="d-flex align-items-center gap-3 p-2 rounded hover-gray-bg" style="cursor:pointer">
+        <div style="background: #e7f6f8; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0073b1;">
+            <i class="fa-solid fa-lightbulb"></i>
+        </div>
+        <div>
+            <div class="small fw-bold">Improve your skills</div>
+            <div class="extra-small text-muted">See what skills are trending in Pakistan's tech market.</div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
