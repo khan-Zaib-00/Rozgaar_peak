@@ -324,3 +324,46 @@ body {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+  .hero-gradient {
+    padding: 2.5rem 1rem;
+  }
+  .hero-gradient h1 {
+    font-size: 2rem !important;
+  }
+  .job-feed-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .job-feed-item .align-self-center {
+    align-self: flex-start !important;
+    margin-top: 10px;
+  }
+  .job-feed-logo {
+    margin-bottom: 10px;
+  }
+  .stepper-progress::before {
+    left: 5%;
+    right: 5%;
+  }
+  .step-label {
+    font-size: 0.6rem;
+  }
+  .step-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+}
+@media (max-width: 576px) {
+  .post-placeholder {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .post-avatar-mini {
+    align-self: center;
+    margin-bottom: 10px;
+  }
+}

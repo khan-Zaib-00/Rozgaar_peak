@@ -24,6 +24,10 @@
         .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
         
         .main-container { margin-top: 120px; }
+        @media (max-width: 991px) {
+            .main-container { margin-top: 80px; }
+            .navbar { height: auto; }
+        }
         .profile-card-mini { padding: 0; text-align: center; position: relative; overflow: visible !important; }
         .sidebar-aside { padding-top: 10px; }
         .profile-bg { height: 100px; background: linear-gradient(135deg, #a0b4b7 0%, var(--linkedin-blue) 100%); border-radius: 12px 12px 0 0; }
@@ -50,12 +54,12 @@
 </head>
 <body class="animate-fade-in">
 
-    <nav class="navbar">
-        <div class="container d-flex align-items-center flex-nowrap">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
                 <a class="navbar-brand" href="{{ url_for('index') }}">
                     <i class="fa-solid fa-briefcase"></i>
-                    <span class="ms-1">RozgaarSphere</span>
+                    <span class="ms-1 d-none d-sm-inline">RozgaarSphere</span>
                 </a>
                 <div class="search-container d-none d-lg-block">
                     <form action="{{ url_for('jobs.list_jobs') }}" method="GET">
@@ -65,86 +69,96 @@
                 </div>
             </div>
             
-            <ul class="navbar-nav d-flex flex-row align-items-center gap-2 ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link {{ 'active' if request.endpoint == 'index' }}" href="{{ url_for('index') }}">
-                        <i class="fa-solid fa-house"></i> <span>Home</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ 'active' if 'jobs' in request.endpoint }}" href="{{ url_for('jobs.list_jobs') }}">
-                        <i class="fa-solid fa-briefcase"></i> <span>Jobs</span>
-                    </a>
-                </li>
+            <button class="navbar-toggler border-0 shadow-none text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars" style="font-size: 1.5rem;"></i>
+            </button>
 
-                {% if session.get('user_id') %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('messages.inbox') }}">
-                        <i class="fa-solid fa-message"></i> <span>Messaging</span>
-                    </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link position-relative" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-bell"></i> <span>Notifications</span>
-                        {% if unread_count > 0 %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 2px 5px;">
-                            {{ unread_count }}
-                        </span>
-                        {% endif %}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 glass-card" aria-labelledby="notifDropdown" style="width: 300px; max-height: 400px; overflow-y: auto;">
-                        <li class="p-2 border-bottom"><h6 class="mb-0 small fw-bold">Recent Notifications</h6></li>
-                        {% if notifications %}
-                            {% for notif in notifications %}
-                            <li>
-                                <a class="dropdown-item p-3 {{ 'bg-hover' if not notif.is_read else '' }}" href="{{ notif.action_url or '#' }}">
-                                    <div class="small fw-600 mb-1">{{ notif.message }}</div>
-                                    <div class="extra-small text-muted">{{ notif.created_at.strftime('%H:%M %p') }}</div>
-                                </a>
-                            </li>
-                            {% endfor %}
-                        {% else %}
-                            <li class="p-4 text-center text-muted small">No notifications yet</li>
-                        {% endif %}
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-circle-user text-primary"></i> <span>Me <i class="fa-solid fa-caret-down" style="font-size:0.6rem"></i></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 glass-card" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item px-4 py-2" href="{{ url_for('seeker.seeker_dashboard') if session.get('role') == 'seeker' else url_for('employer.employer_dashboard') }}"><i class="fa-solid fa-gauge-high me-2"></i> Dashboard</a></li>
-                        {% if session.get('role') == 'admin' %}
-                        <li><a class="dropdown-item px-4 py-2" href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-shield-halved me-2"></i> Admin Panel</a></li>
-                        {% endif %}
-                    </ul>
-                </li>
-                <!-- Direct Logout Button -->
-                <li class="nav-item">
-                    <a class="nav-link text-danger fw-bold" href="{{ url_for('auth.logout') }}">
-                        <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
-                    </a>
-                </li>
-                {% else %}
-                <li class="nav-item ms-lg-2">
-                    <a class="btn btn-linkedin-primary px-4 py-1" href="{{ url_for('auth.login') }}">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.signup') }}" style="color: var(--linkedin-blue) !important; font-weight:700 !important">Join Now</a>
-                </li>
-                {% endif %}
-                
-                <!-- Theme Toggle -->
-                <li class="nav-item theme-switch-wrapper">
-                    <label class="theme-switch" for="checkbox">
-                        <input type="checkbox" id="checkbox" />
-                        <div class="slider">
-                            <i class="fa-solid fa-sun text-warning"></i>
-                            <i class="fa-solid fa-moon text-light"></i>
-                        </div>
-                    </label>
-                </li>
-            </ul>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-2 mt-3 mt-lg-0 pb-3 pb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.endpoint == 'index' }}" href="{{ url_for('index') }}">
+                            <i class="fa-solid fa-house"></i> <span class="d-lg-block">Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if 'jobs' in request.endpoint }}" href="{{ url_for('jobs.list_jobs') }}">
+                            <i class="fa-solid fa-briefcase"></i> <span class="d-lg-block">Jobs</span>
+                        </a>
+                    </li>
+
+                    {% if session.get('user_id') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('messages.inbox') }}">
+                            <i class="fa-solid fa-message"></i> <span class="d-lg-block">Messaging</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown text-center">
+                        <a class="nav-link position-relative" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-bell"></i> <span class="d-lg-block">Notifications</span>
+                            {% if unread_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 2px 5px; transform: translate(-50%, 0) !important;">
+                                {{ unread_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 glass-card text-start" aria-labelledby="notifDropdown" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                            <li class="p-2 border-bottom"><h6 class="mb-0 small fw-bold">Recent Notifications</h6></li>
+                            {% if notifications %}
+                                {% for notif in notifications %}
+                                <li>
+                                    <a class="dropdown-item p-3 {{ 'bg-hover' if not notif.is_read else '' }}" href="{{ notif.action_url or '#' }}">
+                                        <div class="small fw-600 mb-1">{{ notif.message }}</div>
+                                        <div class="extra-small text-muted">{{ notif.created_at.strftime('%H:%M %p') }}</div>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="p-4 text-center text-muted small">No notifications yet</li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown text-center">
+                        <a class="nav-link" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-circle-user text-primary"></i> <span class="d-lg-block">Me <i class="fa-solid fa-caret-down d-none d-lg-inline" style="font-size:0.6rem"></i></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 glass-card text-start" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item px-4 py-2" href="{{ url_for('seeker.seeker_dashboard') if session.get('role') == 'seeker' else url_for('employer.employer_dashboard') }}"><i class="fa-solid fa-gauge-high me-2"></i> Dashboard</a></li>
+                            {% if session.get('role') == 'admin' %}
+                            <li><a class="dropdown-item px-4 py-2" href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-shield-halved me-2"></i> Admin Panel</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    <li class="nav-item d-lg-none mt-2 w-100 px-3">
+                        <a class="btn btn-sm btn-outline-danger w-100" href="{{ url_for('auth.logout') }}">
+                            <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+                        </a>
+                    </li>
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link text-danger fw-bold" href="{{ url_for('auth.logout') }}">
+                            <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item ms-lg-2 w-100 w-lg-auto px-3 px-lg-0 mt-2 mt-lg-0">
+                        <a class="btn btn-linkedin-primary d-block d-lg-inline-block px-4 py-1" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item w-100 w-lg-auto px-3 px-lg-0">
+                        <a class="nav-link d-block d-lg-inline-block" href="{{ url_for('auth.signup') }}" style="color: var(--linkedin-blue) !important; font-weight:700 !important">Join Now</a>
+                    </li>
+                    {% endif %}
+                    
+                    <!-- Theme Toggle -->
+                    <li class="nav-item theme-switch-wrapper mt-3 mt-lg-0 ms-lg-3 text-center">
+                        <label class="theme-switch" for="checkbox">
+                            <input type="checkbox" id="checkbox" />
+                            <div class="slider">
+                                <i class="fa-solid fa-sun text-warning"></i>
+                                <i class="fa-solid fa-moon text-light"></i>
+                            </div>
+                        </label>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
