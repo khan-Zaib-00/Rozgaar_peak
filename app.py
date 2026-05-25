@@ -32,7 +32,10 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'noreply@rozgaarsphere.com')
 
 mail = Mail(app)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+    socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+else:
+    socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
