@@ -97,16 +97,37 @@
         }
 
         if (sendBtn && receiverId) {
-            const sendMessage = () => {
+            const sendMessage = async () => {
                 const content = msgInput.value.trim();
-                if (content && socket) {
-                    socket.emit('send_msg', {
-                        receiver_id: receiverId,
-                        job_id: currentJobId,
-                        content: content
-                    });
-                    msgInput.value = '';
-                }
+                if (!content) return;
+
+                // Show message immediately (optimistic UI)
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'd-flex justify-content-end mb-3 animate-fade-in';
+                msgDiv.innerHTML = `
+                    <div class="p-2 px-3 rounded-pill shadow-sm" style="max-width: 75%; background-color: var(--linkedin-blue); color: white;">
+                        <div class="small">${content}</div>
+                    </div>`;
+                chatBox.appendChild(msgDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                msgInput.value = '';
+
+                // PRIMARY: HTTP POST (guaranteed to work on PythonAnywhere)
+                try {
+                    const formData = new FormData();
+                    formData.append('receiver_id', receiverId);
+                    formData.append('job_id', currentJobId || '');
+                    formData.append('content', content);
+                    formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').content : '');
+                    await fetch('{{ url_for("messages.send_message") }}', { method: 'POST', body: formData });
+                } catch (err) { console.error('Message POST failed:', err); }
+
+                // SECONDARY: Socket.IO for real-time notification only
+                try {
+                    if (typeof socket !== 'undefined' && socket.connected) {
+                        socket.emit('send_msg', { receiver_id: receiverId, job_id: currentJobId, content: content });
+                    }
+                } catch(e) {}
             };
 
             sendBtn.addEventListener('click', sendMessage);
@@ -117,22 +138,21 @@
                 }
             });
 
-            // Listen for new messages
-            socket.on('new_msg', (data) => {
-                // If the message belongs to the current open chat AND job thread
-                if ((data.sender_id == receiverId || data.sender_id == currentUserId) && data.job_id == currentJobId) {
-                    const isMine = data.sender_id == currentUserId;
-                    const msgDiv = document.createElement('div');
-                    msgDiv.className = `d-flex ${isMine ? 'justify-content-end' : 'justify-content-start'} mb-3 animate-fade-in`;
-                    msgDiv.innerHTML = `
-                        <div class="p-2 px-3 rounded-pill shadow-sm" style="max-width: 75%; ${isMine ? 'background-color: var(--linkedin-blue); color: white;' : 'background-color: var(--bg-hover); color: var(--text-primary);'}">
-                            <div class="small">${data.content}</div>
-                        </div>
-                    `;
-                    chatBox.appendChild(msgDiv);
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                }
-            });
+            // Listen for new messages from other user in real-time
+            if (typeof socket !== 'undefined') {
+                socket.on('new_msg', (data) => {
+                    if (data.sender_id == receiverId && data.job_id == currentJobId) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'd-flex justify-content-start mb-3 animate-fade-in';
+                        msgDiv.innerHTML = `
+                            <div class="p-2 px-3 rounded-pill shadow-sm" style="max-width: 75%; background-color: var(--bg-hover); color: var(--text-primary);">
+                                <div class="small">${data.content}</div>
+                            </div>`;
+                        chatBox.appendChild(msgDiv);
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                });
+            }
         }
 
         // Contact Search Filter
