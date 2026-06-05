@@ -1,86 +1,309 @@
 {% extends "base.html" %}
-{% block title %}Feed | RozgaarSphere{% endblock %}
-{% block content %}
+{% block title %}Job Search | RozgaarSphere{% endblock %}
 
-<!-- Hero Section -->
-<div class="hero-gradient mb-3 animate-fade-in">
-    <h1 class="fw-bold mb-2" style="font-size: 2.5rem; letter-spacing: -1px;">Elevate Your Career <br> with <span style="color: #60a5fa;">RozgaarSphere</span></h1>
-    <p class="mb-4" style="font-size: 1.25rem; opacity: 0.9; font-weight: 500;">Pakistan's most professional job portal for elite tech talent.</p>
-    {% if session.get('role') == 'admin' %}
-    <div class="d-flex justify-content-center gap-3">
-        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-light rounded-pill px-5 fw-bold text-danger shadow">
-            <i class="fa-solid fa-gauge-high me-2"></i> Admin Portal
-        </a>
-        <a href="{{ url_for('jobs.list_jobs') }}" class="btn btn-outline-light rounded-pill px-4">Browse Jobs</a>
+{% block layout %}
+<style>
+    /* Indeed-specific overrides for the homepage */
+    .indeed-hero {
+        background-color: #ffffff;
+        padding: 3rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 2rem;
+    }
+    
+    .indeed-title {
+        font-weight: 700;
+        font-size: 2.5rem;
+        color: #2d2d2d;
+        margin-bottom: 2rem;
+    }
+    
+    .indeed-search-container {
+        display: flex;
+        background: #fff;
+        border: 1px solid #767676;
+        border-radius: 8px;
+        padding: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .indeed-search-container:focus-within {
+        border-color: #2557a7;
+        box-shadow: 0 0 0 2px #2557a7;
+    }
+    
+    .indeed-input-wrapper {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .indeed-input-wrapper:first-child {
+        border-right: 1px solid #ccc;
+    }
+    
+    .indeed-input-wrapper label {
+        position: absolute;
+        left: 1rem;
+        font-weight: 600;
+        color: #2d2d2d;
+        font-size: 0.9rem;
+    }
+    
+    .indeed-input-wrapper input {
+        width: 100%;
+        border: none;
+        padding: 0.8rem 1rem 0.8rem 4.5rem;
+        font-size: 1rem;
+        outline: none;
+        background: transparent;
+    }
+    
+    .indeed-btn {
+        background-color: #2557a7;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.8rem 2rem;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-left: 0.5rem;
+    }
+    
+    .indeed-btn:hover {
+        background-color: #164081;
+    }
+    
+    .indeed-links {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .indeed-links a {
+        color: #2557a7;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 0 1rem;
+    }
+    
+    .indeed-links a:hover {
+        text-decoration: underline;
+    }
+
+    .indeed-feed-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: #2d2d2d;
+    }
+
+    .indeed-job-card {
+        background: #fff;
+        border: 1px solid #d4d2d0;
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .indeed-job-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-color: #2557a7;
+    }
+
+    .indeed-job-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #2557a7;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .indeed-job-title:hover {
+        text-decoration: underline;
+    }
+
+    .indeed-job-company {
+        font-size: 1rem;
+        color: #2d2d2d;
+        font-weight: 400;
+    }
+
+    .indeed-job-location {
+        font-size: 1rem;
+        color: #595959;
+        margin-bottom: 0.75rem;
+    }
+
+    .indeed-badge {
+        background: #f3f2ef;
+        color: #2d2d2d;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .indeed-badge.easy-apply {
+        background: #eef2ff;
+        color: #2557a7;
+    }
+    
+    .indeed-badge.urgently-hiring {
+        background: #fdf5e6;
+        color: #b75e00;
+    }
+
+    .indeed-sidebar-card {
+        border: 1px solid #d4d2d0;
+        border-radius: 8px;
+        padding: 1.25rem;
+        background: #fff;
+    }
+    
+    /* Make base.html search invisible on homepage since we have a big one */
+    .navbar .search-container {
+        display: none !important;
+    }
+    
+    @media (max-width: 768px) {
+        .indeed-search-container {
+            flex-direction: column;
+            border: none;
+            box-shadow: none;
+            background: transparent;
+        }
+        .indeed-input-wrapper {
+            background: #fff;
+            border: 1px solid #767676;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        .indeed-input-wrapper:first-child {
+            border-right: 1px solid #767676;
+        }
+        .indeed-btn {
+            margin-left: 0;
+            width: 100%;
+        }
+        .indeed-links a {
+            display: block;
+            margin: 0.5rem 0;
+        }
+    }
+</style>
+
+<!-- Hero Search Area -->
+<div class="indeed-hero animate-fade-in" style="margin-top: -1.5rem; margin-left: -15px; margin-right: -15px; width: calc(100% + 30px);">
+    <div class="container text-center">
+        <h1 class="indeed-title">Find your next job here</h1>
+        
+        <form action="{{ url_for('jobs.list_jobs') }}" method="GET">
+            <div class="indeed-search-container">
+                <div class="indeed-input-wrapper">
+                    <label for="what">What</label>
+                    <input type="text" id="what" name="keyword" placeholder="Job title, keywords, or company">
+                </div>
+                <div class="indeed-input-wrapper">
+                    <label for="where">Where</label>
+                    <input type="text" id="where" name="location" placeholder="City, state, zip code, or &quot;remote&quot;">
+                </div>
+                <button type="submit" class="indeed-btn">Find jobs</button>
+            </div>
+        </form>
+        
+        <div class="indeed-links">
+            <a href="{{ url_for('auth.signup') }}">Post your resume</a> - It only takes a few seconds
+            <br class="d-md-none">
+            <a href="{{ url_for('auth.signup') }}?role=employer" class="ms-md-4 mt-2 mt-md-0 d-inline-block">Employers: Post a job</a>
+        </div>
     </div>
-    {% elif not session.get('user_id') %}
-    <div class="d-flex justify-content-center gap-3">
-        <a href="{{ url_for('auth.login') }}" class="btn btn-light rounded-pill px-5 fw-bold text-primary shadow">Login Now</a>
-        <a href="{{ url_for('auth.signup') }}" class="btn btn-outline-light rounded-pill px-4 fw-bold">Join Free</a>
-    </div>
-    {% else %}
-    <div class="glass-card d-inline-block px-5 py-2 rounded-pill small fw-bold shadow-sm">
-        Welcome back, {{ session.get('name') }}! 👋
-    </div>
-    {% endif %}
 </div>
+<div class="row">
 
-<!-- Start a post placeholder -->
-{% if session.get('user_id') %}
-<div class="post-placeholder animate-fade-in" style="animation-delay: 0.1s;">
-    <img src="{{ url_for('static', filename='uploads/' + (session.get('profile_pic', 'default_avatar.png'))) }}" class="post-avatar-mini" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-    <div class="post-input-mock" onclick="location.href='/jobs/'">Start a job search...</div>
-</div>
-{% endif %}
-
-<div class="card-feed animate-fade-in" style="animation-delay: 0.2s;">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h6 class="mb-0 fw-bold" style="font-size: 1.1rem; color: var(--text-primary);">Recent Job Postings</h6>
-        <i class="fa-solid fa-ellipsis text-muted" style="cursor: pointer;"></i>
-    </div>
-
+<!-- Main Content Grid -->
+<div class="col-lg-8 col-md-12 mb-4 animate-fade-in" style="animation-delay: 0.1s;">
+    <h2 class="indeed-feed-title">Recent Job Postings</h2>
+    
     {% if jobs %}
         {% for job in jobs %}
-        <div class="job-feed-item">
-            <div class="job-feed-logo">
-                <i class="fa-solid fa-building"></i>
+        <div class="indeed-job-card">
+            <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="indeed-job-title">{{ job.title }}</a>
+            <div class="indeed-job-company">{{ job.company.company_name if job.company else 'Tech Dynamics Pakistan' }}</div>
+            <div class="indeed-job-location">{{ job.location }}</div>
+            
+            <div class="mt-2">
+                <span class="indeed-badge"><i class="fa-solid fa-briefcase"></i> {{ job.job_type.title() if job.job_type else 'Full-time' }}</span>
+                <span class="indeed-badge urgently-hiring"><i class="fa-solid fa-fire"></i> Actively hiring</span>
+                <span class="indeed-badge easy-apply"><i class="fa-solid fa-paper-plane"></i> Easy Apply</span>
             </div>
-            <div class="job-feed-info">
-                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="job-feed-title">{{ job.title }}</a>
-                <div class="job-feed-company">{{ job.company.company_name if job.company else 'Tech Dynamics Pakistan' }}</div>
-                <div class="job-feed-location">{{ job.location }} • {{ job.job_type.title() if job.job_type else 'Full-time' }}</div>
-                <div class="mt-2 d-flex gap-2">
-                    <span class="badge-ft"><i class="fa-solid fa-check-circle me-1"></i> Actively recruiting</span>
-                    <span class="badge-remote" style="background: #eef2ff; color: #4338ca;"><i class="fa-solid fa-bolt me-1"></i> Easy Apply</span>
-                </div>
+            
+            <div class="mt-3 text-muted" style="font-size: 0.9rem;">
+                {{ job.description[:120] }}...
             </div>
-            <div class="align-self-center">
-                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="btn-linkedin-outline">View Details</a>
+            <div class="mt-2 extra-small text-muted">
+                Posted {{ job.created_at.strftime('%b %d, %Y') if job.created_at else 'Recently' }}
             </div>
         </div>
         {% endfor %}
-
-        <div class="text-center mt-3 pt-2 border-top">
-            <a href="{{ url_for('jobs.list_jobs') }}" class="text-decoration-none fw-bold small" style="color: rgba(0,0,0,0.6);">Show more <i class="fa-solid fa-arrow-right ms-1"></i></a>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('jobs.list_jobs') }}" class="indeed-btn text-decoration-none" style="display:inline-block; padding: 0.5rem 1.5rem; font-size:1rem;">See more jobs</a>
         </div>
     {% else %}
-        <div class="text-center py-4">
-            <p class="text-muted">No jobs posted yet. Check back soon!</p>
+        <div class="text-center py-5 indeed-sidebar-card">
+            <h4 class="text-muted">No jobs posted yet</h4>
+            <p>Check back soon for new opportunities!</p>
         </div>
     {% endif %}
 </div>
 
-<!-- Hiring Trends / Suggested Section -->
-<div class="card-feed mt-2">
-    <h6 class="fw-bold mb-3">Suggested for you</h6>
-    <div class="d-flex align-items-center gap-3 p-2 rounded hover-gray-bg" style="cursor:pointer">
-        <div style="background: #e7f6f8; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0073b1;">
-            <i class="fa-solid fa-lightbulb"></i>
+<!-- Right Sidebar -->
+<div class="col-lg-4 col-md-12 d-none d-lg-block animate-fade-in" style="animation-delay: 0.2s;">
+    <div class="indeed-sidebar-card mb-4">
+        <h5 class="fw-bold mb-3" style="font-size: 1.1rem;">Hiring Trends</h5>
+        <p class="text-muted small mb-3">See what's trending in Pakistan's tech market.</p>
+        
+        <div class="mb-4">
+            <h6 class="fw-bold small mb-2" style="color: #595959;">TOP LOCATIONS</h6>
+            {% for loc in g.top_locations %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <a href="{{ url_for('jobs.list_jobs', location=loc.location) }}" class="text-decoration-none" style="color:#2557a7; font-weight:600; font-size:0.95rem;">{{ loc.location }}</a>
+                <span class="badge bg-light text-dark">{{ loc.count }}</span>
+            </div>
+            {% else %}
+            <div class="text-muted small">No data available</div>
+            {% endfor %}
         </div>
+
         <div>
-            <div class="small fw-bold">Improve your skills</div>
-            <div class="extra-small text-muted">See what skills are trending in Pakistan's tech market.</div>
+            <h6 class="fw-bold small mb-2" style="color: #595959;">TOP CATEGORIES</h6>
+            {% for cat in g.top_categories %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-600" style="color:#2d2d2d; font-size:0.95rem;">{{ cat.category }}</span>
+                <span class="badge bg-light text-dark">{{ cat.count }}</span>
+            </div>
+            {% else %}
+            <div class="text-muted small">No data available</div>
+            {% endfor %}
         </div>
+    </div>
+    
+    <div class="indeed-sidebar-card">
+        <h5 class="fw-bold mb-2" style="font-size: 1.1rem;">Get the RozgaarSphere app</h5>
+        <p class="text-muted small mb-3">Search jobs, apply, and get notifications on the go.</p>
+        <button class="btn btn-outline-dark w-100 fw-bold border-2">Download App</button>
     </div>
 </div>
 

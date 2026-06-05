@@ -176,6 +176,7 @@
     </div>
 
     <main class="container main-container">
+        {% block layout %}
         <div class="row">
             <!-- Sidebar Left -->
             <aside class="col-lg-3 col-md-4 d-none d-md-block sidebar-aside">
@@ -256,6 +257,7 @@
                 </div>
             </aside>
         </div>
+        {% endblock %}
     </main>
 
     <!-- Socket.io & Bootstrap JS -->
