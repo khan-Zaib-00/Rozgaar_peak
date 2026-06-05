@@ -7,7 +7,15 @@ from docx import Document
 # Load spacy model
 try:
     nlp = spacy.load("en_core_web_sm")
-except:
+except OSError:
+    try:
+        from spacy.cli import download
+        download("en_core_web_sm")
+        nlp = spacy.load("en_core_web_sm")
+    except Exception as e:
+        print(f"Spacy download failed: {e}")
+        nlp = None
+except Exception:
     nlp = None
 
 class ResumeParser:

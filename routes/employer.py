@@ -229,8 +229,8 @@ def update_status(app_id):
         try:
             from app import mail
             msg = Message(f"Update on your application for {application.job.title}",
-                          recipients=[application.user.email])
-            msg.body = f"Hi {application.user.name},\n\nYour application status for '{application.job.title}' has been updated to: {status}.\n\nLog in to your dashboard to see more details.\n\nBest regards,\nRozgaarSphere Team"
+                          recipients=[application.applicant.email])
+            msg.body = f"Hi {application.applicant.name},\n\nYour application status for '{application.job.title}' has been updated to: {status}.\n\nLog in to your dashboard to see more details.\n\nBest regards,\nRozgaarSphere Team"
             mail.send(msg)
         except Exception as mail_err:
             print(f"Mail sending failed: {mail_err}")

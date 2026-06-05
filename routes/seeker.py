@@ -159,7 +159,11 @@ def apply_job(job_id):
                     flash('File size exceeds 2MB limit.', 'error')
                     return redirect(request.url)
                     
-                filename = secure_filename(f"{session['user_id']}_{job_id}_{file.filename}")
+                safe_name = secure_filename(file.filename)
+                if len(safe_name) > 50:
+                    name_part, ext = os.path.splitext(safe_name)
+                    safe_name = name_part[:50-len(ext)] + ext
+                filename = f"{session['user_id']}_{job_id}_{safe_name}"
                 upload_folder = current_app.config['UPLOAD_FOLDER']
                 if not os.path.exists(upload_folder):
                     os.makedirs(upload_folder, exist_ok=True)

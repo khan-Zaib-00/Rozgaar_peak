@@ -37,8 +37,8 @@ def manage_users():
 @admin_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
-    if user.id == session.get('user_id'):
-        flash("You cannot delete your own admin account!", "error")
+    if user.role == 'admin':
+        flash("You cannot delete an admin account!", "error")
         return redirect(url_for('admin.manage_users'))
     
     db.session.delete(user)
