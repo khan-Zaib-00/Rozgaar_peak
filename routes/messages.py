@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from models.schema import db, User, Message, Notification
+from models.schema import db, User, Message, Notification, Job
 
 messages_bp = Blueprint('messages', __name__, url_prefix='/messages')
 
@@ -76,7 +76,9 @@ def send_message():
         db.session.add(new_msg)
         
         # Notify the receiver
-        notif_msg = f"New message regarding {Job.query.get(job_id).title if job_id else 'job'}: {content[:50]}..."
+        job = Job.query.get(job_id) if job_id else None
+        job_title = job.title if job else 'General Inquiry'
+        notif_msg = f"New message regarding {job_title}: {content[:50]}..."
         action_url = url_for('messages.inbox', user_id=session['user_id'], job_id=job_id)
         new_notif = Notification(user_id=receiver_id, message=notif_msg[:490], action_url=action_url)
         db.session.add(new_notif)
