@@ -1,40 +1,43 @@
 {% extends "base.html" %}
 {% block title %}My Profile & Resume | RozgaarSphere{% endblock %}
 {% block content %}
-<div class="card card-center" style="margin-top: 2rem;">
-    <div class="flex space-between mb-2 items-center">
-        <h2><i class="fa-solid fa-address-card" style="color:var(--secondary); margin-right: 0.5rem;"></i> My Résumé</h2>
-        <a href="{{ url_for('seeker.seeker_dashboard') }}" class="btn btn-secondary btn-sm"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+<div class="indeed-card" style="max-width: 800px; margin: 2rem auto;">
+    <div class="p-4 border-bottom bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 fw-bold" style="color: var(--indeed-text);"><i class="fa-solid fa-address-card text-primary me-2"></i> My Résumé</h4>
+            <a href="{{ url_for('seeker.seeker_dashboard') }}" class="indeed-btn-secondary px-3 py-2"><i class="fa-solid fa-arrow-left me-1"></i> Dashboard</a>
+        </div>
+        <p class="text-muted mt-2 mb-0 small">
+            Fill out your core skills and experience. This information is shared with employers when you apply.
+        </p>
     </div>
 
-    <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">
-        Fill out your core skills and experience. This information is shared with employers when you apply.
-    </p>
-
-    <form method="POST">
+    <form method="POST" class="p-4">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="grid col-2 gap-1 mb-1">
-            <div class="form-group">
-                <label>Core Skills</label>
+        
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3">
+                <label class="form-label small fw-bold">Core Skills</label>
                 <input type="text" name="skills" class="form-control" value="{{ profile.skills if profile else '' }}" placeholder="e.g. Python, NextJS (Comma Separated)" required>
             </div>
-            <div class="form-group">
-                <label>Contact Phone</label>
+            <div class="col-md-6 mb-3">
+                <label class="form-label small fw-bold">Contact Phone</label>
                 <input type="text" name="phone" class="form-control" value="{{ profile.phone if profile else '' }}" placeholder="+92 300 1234567">
             </div>
         </div>
         
-        <div class="form-group mb-1">
-            <label>Highest Education</label>
+        <div class="mb-3">
+            <label class="form-label small fw-bold">Highest Education</label>
             <input type="text" name="education" class="form-control" value="{{ profile.education if profile else '' }}" placeholder="e.g. BS Software Engineering">
         </div>
 
-        <div class="form-group mb-1">
-            <label>Professional Bio / Summary</label>
+        <div class="mb-4">
+            <label class="form-label small fw-bold">Professional Bio / Summary</label>
             <textarea name="bio" class="form-control" rows="3" placeholder="Briefly describe yourself...">{{ profile.bio if profile else '' }}</textarea>
         </div>
 
-        <div class="row mb-3">
+        <h6 class="fw-bold mb-3 mt-4 text-uppercase small text-muted">Web Profiles</h6>
+        <div class="row mb-4">
             <div class="col-md-6 mb-3">
                 <label class="form-label small fw-bold"><i class="fa-brands fa-linkedin text-muted me-1"></i> LinkedIn URL</label>
                 <input type="url" name="linkedin_url" class="form-control" value="{{ profile.linkedin_url if profile else '' }}" placeholder="https://linkedin.com/in/username">
@@ -45,7 +48,8 @@
             </div>
         </div>
 
-        <div class="row mb-3">
+        <h6 class="fw-bold mb-3 mt-4 text-uppercase small text-muted">Logistics</h6>
+        <div class="row mb-4">
             <div class="col-md-3 mb-3">
                 <label class="form-label small fw-bold"><i class="fa-solid fa-map-pin text-muted me-1"></i> Location</label>
                 <input type="text" name="current_location" class="form-control" value="{{ profile.current_location if profile else '' }}" placeholder="City">
@@ -64,19 +68,19 @@
             </div>
         </div>
 
-        <div class="form-group mb-1">
-            <label>Detailed Experience</label>
+        <div class="mb-4">
+            <label class="form-label small fw-bold">Detailed Experience</label>
             <textarea name="experience" class="form-control" rows="5" placeholder="Detail your past jobs and projects..." required>{{ profile.experience if profile else '' }}</textarea>
         </div>
         
-        <button type="submit" class="btn btn-linkedin-primary px-5 py-3 shadow-sm w-100" style="font-size: 1.1rem;">
-            <i class="fa-solid fa-check-circle"></i> Save Professional Profile
+        <button type="submit" class="indeed-btn-primary px-5 py-3 w-100" style="font-size: 1.1rem;">
+            Save Profile
         </button>
     </form>
 </div>
 
 <style>
-    .form-label { color: #555; }
-    .form-control:focus { border-color: #0a66c2; box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1); }
+    .form-label { color: var(--indeed-text-secondary); }
+    .form-control:focus { border-color: var(--indeed-blue); box-shadow: 0 0 0 3px rgba(37, 87, 167, 0.1); }
 </style>
 {% endblock %}

@@ -3,10 +3,10 @@
 {% block content %}
 <div class="row justify-content-center mt-5 mb-5">
     <div class="col-md-6 col-lg-5">
-        <div class="card-linkedin p-4 shadow-sm">
+        <div class="indeed-card p-4 shadow-sm">
             <div class="text-center mb-4">
-                <h1 class="fw-bold h3 mb-2">Join RozgaarSphere</h1>
-                <p class="text-muted">Make the most of your professional life</p>
+                <h1 class="fw-bold h3 mb-2" style="color: var(--indeed-text);">Ready to take the next step?</h1>
+                <p class="text-muted">Create an account to find your dream job or ideal candidate.</p>
             </div>
             
             <form method="POST">
@@ -32,14 +32,14 @@
                 </div>
                 
                 <p class="text-center extra-small text-muted mb-4">
-                    By clicking Agree & Join, you agree to the RozgaarSphere <a href="#" class="text-decoration-none fw-bold" style="color: #0a66c2;">User Agreement</a>, <a href="#" class="text-decoration-none fw-bold" style="color: #0a66c2;">Privacy Policy</a>, and <a href="#" class="text-decoration-none fw-bold" style="color: #0a66c2;">Cookie Policy</a>.
+                    By clicking Create Account, you agree to the RozgaarSphere <a href="#" class="text-decoration-none fw-bold" style="color: var(--indeed-blue);">User Agreement</a>, <a href="#" class="text-decoration-none fw-bold" style="color: var(--indeed-blue);">Privacy Policy</a>, and <a href="#" class="text-decoration-none fw-bold" style="color: var(--indeed-blue);">Cookie Policy</a>.
                 </p>
                 
-                <button type="submit" class="btn btn-linkedin-primary w-100 py-2 mb-4">Agree & Join</button>
+                <button type="submit" class="indeed-btn-primary w-100 py-2 mb-4">Create Account</button>
             </form>
             
             <div class="text-center">
-                <p class="text-muted small">Already on RozgaarSphere? <a href="{{ url_for('auth.login') }}" class="text-decoration-none fw-bold" style="color: #0a66c2;">Sign in</a></p>
+                <p class="text-muted small">Already have an account? <a href="{{ url_for('auth.login') }}" class="text-decoration-none fw-bold" style="color: var(--indeed-blue);">Sign in</a></p>
             </div>
         </div>
     </div>
@@ -48,8 +48,8 @@
 <style>
     .extra-small { font-size: 0.75rem; line-height: 1.4; }
     .form-control:focus, .form-select:focus {
-        border-color: #0a66c2;
-        box-shadow: 0 0 0 0.2rem rgba(10, 102, 194, 0.1);
+        border-color: var(--indeed-blue);
+        box-shadow: 0 0 0 0.2rem rgba(37, 87, 167, 0.1);
     }
 </style>
 {% endblock %}

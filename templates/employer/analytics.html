@@ -2,16 +2,16 @@
 {% block title %}Employer Analytics | RozgaarSphere{% endblock %}
 {% block content %}
 
-<div class="flex space-between mb-3">
+<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="fw-bold mb-0">Platform Analytics</h2>
+        <h2 class="fw-bold mb-0" style="color: var(--indeed-text);">Platform Analytics</h2>
         <p class="text-muted small"><i class="fa-solid fa-chart-line text-primary me-2"></i> Real-time candidate data insights</p>
     </div>
-    <a href="{{ url_for('employer.employer_dashboard') }}" class="btn btn-linkedin-outline"><i class="fa-solid fa-arrow-left me-2"></i> Dashboard</a>
+    <a href="{{ url_for('employer.employer_dashboard') }}" class="indeed-btn-secondary px-3 py-2"><i class="fa-solid fa-arrow-left me-2"></i> Dashboard</a>
 </div>
 
 {% if no_data %}
-<div class="card-linkedin text-center py-5">
+<div class="indeed-card text-center py-5">
     <div class="mb-3"><i class="fa-solid fa-chart-pie text-muted" style="font-size: 3rem;"></i></div>
     <h5 class="text-muted fw-bold">No Data Available</h5>
     <p class="small text-muted">Post jobs and start receiving applications to see your platform insights.</p>
@@ -19,48 +19,48 @@
 {% else %}
 
 <!-- Key Metrics -->
-<div class="grid grid-3 mb-3">
-    <div class="card-linkedin p-3" style="border-top: 4px solid var(--linkedin-blue);">
-        <div class="extra-small text-muted fw-bold text-uppercase mb-2">Top Performer</div>
+<div class="grid grid-3 mb-4">
+    <div class="indeed-card p-3" style="border-top: 4px solid var(--indeed-blue);">
+        <div class="small text-muted fw-bold text-uppercase mb-2">Top Performer</div>
         <div class="h5 fw-bold mb-1 text-truncate" title="{{ popular_job_title }}">{{ popular_job_title }}</div>
-        <div class="extra-small text-muted">Highest applicant interest</div>
+        <div class="small text-muted">Highest applicant interest</div>
     </div>
-    <div class="card-linkedin p-3" style="border-top: 4px solid var(--success);">
-        <div class="extra-small text-muted fw-bold text-uppercase mb-2">Total Pool</div>
+    <div class="indeed-card p-3" style="border-top: 4px solid #057642;">
+        <div class="small text-muted fw-bold text-uppercase mb-2">Total Pool</div>
         <div class="h4 fw-bold mb-1">{{ total_applicants }}</div>
-        <div class="extra-small text-muted">Candidates in pipeline</div>
+        <div class="small text-muted">Candidates in pipeline</div>
     </div>
-    <div class="card-linkedin p-3" style="border-top: 4px solid var(--warning);">
-        <div class="extra-small text-muted fw-bold text-uppercase mb-2">Active Roles</div>
+    <div class="indeed-card p-3" style="border-top: 4px solid #f59e0b;">
+        <div class="small text-muted fw-bold text-uppercase mb-2">Active Roles</div>
         <div class="h4 fw-bold mb-1">{{ apps_per_job | length }}</div>
-        <div class="extra-small text-muted">Open positions</div>
+        <div class="small text-muted">Open positions</div>
     </div>
 </div>
 
 <!-- Charts Section -->
-<div class="grid grid-2 mb-3">
-    <div class="card-linkedin p-4">
-        <h6 class="fw-bold mb-4 d-flex align-items-center">
+<div class="grid grid-2 mb-4">
+    <div class="indeed-card p-4">
+        <h5 class="fw-bold mb-4" style="color: var(--indeed-text);">
             <i class="fa-solid fa-chart-simple text-primary me-2"></i> Applications Breakdown
-        </h6>
+        </h5>
         <div style="height: 250px;">
             <canvas id="jobsBarChart"></canvas>
         </div>
     </div>
-    <div class="card-linkedin p-4">
-        <h6 class="fw-bold mb-4 d-flex align-items-center">
+    <div class="indeed-card p-4">
+        <h5 class="fw-bold mb-4" style="color: var(--indeed-text);">
             <i class="fa-solid fa-circle-half-stroke text-primary me-2"></i> Status Distribution
-        </h6>
+        </h5>
         <div style="height: 250px;">
             <canvas id="statusPieChart"></canvas>
         </div>
     </div>
 </div>
 
-<div class="grid grid-2 mb-3">
+<div class="grid grid-2 mb-4">
     <!-- Geography: Job Distribution -->
-    <div class="card-linkedin p-4">
-        <h6 class="fw-bold mb-4"><i class="fa-solid fa-briefcase text-primary me-2"></i> Job Distribution</h6>
+    <div class="indeed-card p-4">
+        <h5 class="fw-bold mb-4" style="color: var(--indeed-text);"><i class="fa-solid fa-briefcase text-primary me-2"></i> Job Distribution</h5>
         <p class="extra-small text-muted mb-3">Where your open positions are located.</p>
         <div class="list-group list-group-flush">
             {% for location, count in job_location_dist.items() %}
@@ -73,23 +73,23 @@
     </div>
 
     <!-- Geography: Candidate Reach -->
-    <div class="card-linkedin p-4">
-        <h6 class="fw-bold mb-4"><i class="fa-solid fa-users-viewfinder text-primary me-2"></i> Candidate Reach</h6>
-        <p class="extra-small text-muted mb-3">Actual candidate locations based on applications.</p>
+    <div class="indeed-card p-4">
+        <h5 class="fw-bold mb-4" style="color: var(--indeed-text);"><i class="fa-solid fa-users-viewfinder text-primary me-2"></i> Candidate Reach</h5>
+        <p class="small text-muted mb-3">Actual candidate locations based on applications.</p>
         <div class="list-group list-group-flush">
             {% for location, count in candidate_location_dist.items() %}
             <div class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-color">
                 <span class="small fw-600"><i class="fa-solid fa-location-pin-lock text-muted me-2"></i> {{ location }}</span>
-                <span class="badge bg-light text-success border rounded-pill">{{ count }} applied</span>
+                <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill p-2">{{ count }} applied</span>
             </div>
             {% endfor %}
         </div>
     </div>
 </div>
 
-<div class="card-linkedin p-4 mb-3">
+<div class="indeed-card p-4 mb-3">
     <!-- Skills -->
-    <h6 class="fw-bold mb-4"><i class="fa-solid fa-bolt text-primary me-2"></i> Top Applicant Skills</h6>
+    <h5 class="fw-bold mb-4" style="color: var(--indeed-text);"><i class="fa-solid fa-bolt text-primary me-2"></i> Top Applicant Skills</h5>
     <div class="d-flex flex-wrap gap-2">
         {% for skill, count in top_skills.items() %}
         <div class="p-2 border rounded-3 bg-hover d-flex align-items-center gap-2" style="min-width: 100px;">

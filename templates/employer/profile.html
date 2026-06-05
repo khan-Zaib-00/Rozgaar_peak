@@ -3,25 +3,25 @@
 {% block content %}
 <div class="animate-fade-in" style="max-width:800px; margin: 0 auto; padding-bottom: 4rem;">
     <!-- Header Section -->
-    <div class="card card-linkedin p-4 mb-3" style="border-radius: 12px; background: white;">
+    <div class="indeed-card p-4 mb-3">
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                <div style="width: 64px; height: 64px; background: #e8f3ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--linkedin-blue);">
+                <div style="width: 64px; height: 64px; background: var(--indeed-bg-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--indeed-blue);">
                     <i class="fa-solid fa-building"></i>
                 </div>
                 <div>
-                    <h2 class="mb-0 fw-bold" style="color: #000; font-size: 1.5rem;">Corporate Profile</h2>
+                    <h2 class="mb-0 fw-bold" style="color: var(--indeed-text); font-size: 1.5rem;">Corporate Profile</h2>
                     <p class="mb-0 text-muted fw-600">
-                        Establish your company's identity on <span style="color: var(--linkedin-blue)">RozgaarSphere</span>
+                        Establish your company's identity on <span style="color: var(--indeed-blue)">RozgaarSphere</span>
                     </p>
                 </div>
             </div>
-            <a href="{{ url_for('employer.employer_dashboard') }}" class="btn-linkedin-outline"><i class="fa-solid fa-arrow-left me-1"></i> Dashboard</a>
+            <a href="{{ url_for('employer.employer_dashboard') }}" class="indeed-btn-secondary px-3 py-2"><i class="fa-solid fa-arrow-left me-1"></i> Dashboard</a>
         </div>
     </div>
 
     <!-- Profile Form -->
-    <div class="card card-linkedin shadow-pro" style="border-radius: 12px; background: white; border: none; overflow: hidden;">
+    <div class="indeed-card overflow-hidden">
         <div class="p-4 border-bottom bg-light d-flex align-items-center gap-2">
             <i class="fa-solid fa-pen-to-square text-primary"></i>
             <h5 class="mb-0 fw-bold">Company Identity Details</h5>
@@ -44,8 +44,8 @@
             </div>
 
             <div class="text-center mt-5">
-                <button type="submit" class="btn btn-linkedin-primary px-5 py-3 shadow-sm w-100" style="font-size: 1.1rem;">
-                    <i class="fa-solid fa-save me-2"></i> Save & Proceed to Dashboard
+                <button type="submit" class="indeed-btn-primary px-5 py-3 w-100" style="font-size: 1.1rem;">
+                    <i class="fa-solid fa-save me-2"></i> Save Profile
                 </button>
             </div>
         </form>
@@ -53,10 +53,9 @@
 </div>
 
 <style>
-    .shadow-pro { box-shadow: 0 12px 24px rgba(0,0,0,0.05); }
-    .form-label { color: #555; }
+    .form-label { color: var(--indeed-text-secondary); }
     .input-group-text { border-right: none; }
-    .form-control:focus { border-color: #0a66c2; box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1); }
+    .form-control:focus { border-color: var(--indeed-blue); box-shadow: 0 0 0 3px rgba(37, 87, 167, 0.1); }
     .input-group .form-control { border-left: none; }
 </style>
 {% endblock %}

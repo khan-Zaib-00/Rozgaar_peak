@@ -1,29 +1,36 @@
 :root {
+  /* Indeed Core Colors */
+  --indeed-blue: #2557a7;
+  --indeed-blue-hover: #164081;
+  --indeed-text: #2d2d2d;
+  --indeed-text-secondary: #595959;
+  --indeed-bg: #ffffff;
+  --indeed-bg-light: #f3f2ef;
+  --indeed-border: #e4e2e0;
+
   /* Common Values */
-  --linkedin-blue: #0a66c2;
-  --linkedin-blue-hover: #004182;
   --success: #057642;
   --danger: #d11124;
   --warning: #f59e0b;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
   --radius-pill: 35px;
   --transition-fast: 0.2s ease-in-out;
   --transition-med: 0.3s ease-in-out;
 
   /* Light Theme (Default) */
-  --bg-body: #f3f2ef;
+  --bg-body: #ffffff;
   --bg-card: #ffffff;
   --bg-navbar: #ffffff;
-  --bg-input: #edf3f8;
-  --bg-hover: #ebebeb;
-  --border-color: rgba(0,0,0,0.08);
-  --text-primary: rgba(0,0,0,0.9);
-  --text-secondary: rgba(0,0,0,0.6);
-  --text-muted: rgba(0,0,0,0.5);
-  --shadow-sm: 0 0 0 1px var(--border-color);
-  --glass-bg: rgba(255, 255, 255, 0.7);
+  --bg-input: #ffffff;
+  --bg-hover: #f8f9fa;
+  --border-color: #e4e2e0;
+  --text-primary: #2d2d2d;
+  --text-secondary: #595959;
+  --text-muted: #6f7782;
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --glass-bg: rgba(255, 255, 255, 0.95);
 }
 
 [data-theme="dark"] {
@@ -56,19 +63,27 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
 
-/* Layout & Components */
-.card-linkedin, .card-feed {
+/* Layout & Components - Indeed Style */
+.indeed-card {
   background: var(--bg-card);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
-  margin-bottom: 0.75rem;
-  /* Enforce visible overflow to prevent profile avatar and other elements from being clipped */
-  overflow: visible !important;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  margin-bottom: 1rem;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
-.card-linkedin:hover, .card-feed:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+.indeed-card:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: #cacaca;
+}
+
+/* Legacy Support (To be phased out) */
+.card-linkedin, .card-feed {
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  margin-bottom: 0.75rem;
+  overflow: visible !important;
 }
 
 .card-feed {
@@ -164,12 +179,69 @@ body {
 .badge-ft { background: #e7f6f8; color: #0073b1; }
 .badge-remote { background: #fee2e2; color: #991b1b; }
 
-/* Buttons */
+/* Indeed Style Buttons */
+.indeed-btn-primary {
+  background-color: var(--indeed-blue);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
 
+.indeed-btn-primary:hover {
+  background-color: var(--indeed-blue-hover);
+  color: #ffffff;
+}
+
+.indeed-btn-secondary {
+  background-color: #ececf1;
+  color: var(--indeed-text);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+}
+
+.indeed-btn-secondary:hover {
+  background-color: #d4d4d9;
+  color: var(--indeed-text);
+}
+
+.indeed-btn-outline {
+  background-color: transparent;
+  color: var(--indeed-blue);
+  border: 1px solid var(--indeed-blue);
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+}
+
+.indeed-btn-outline:hover {
+  background-color: rgba(37, 87, 167, 0.08);
+}
+
+/* Legacy Buttons */
 .btn-linkedin-primary {
-  background: var(--linkedin-blue);
+  background: var(--indeed-blue);
   color: #fff;
-  border-radius: 24px;
+  border-radius: var(--radius-pill);
   font-weight: 600;
   padding: 6px 16px;
   font-size: 0.9rem;
@@ -177,12 +249,12 @@ body {
   transition: background var(--transition-fast);
 }
 
-.btn-linkedin-primary:hover { background: var(--linkedin-blue-hover); color: #fff; }
+.btn-linkedin-primary:hover { background: var(--indeed-blue-hover); color: #fff; }
 
 .btn-linkedin-outline {
-  color: var(--linkedin-blue);
-  border: 1px solid var(--linkedin-blue);
-  border-radius: 24px;
+  color: var(--indeed-blue);
+  border: 1px solid var(--indeed-blue);
+  border-radius: var(--radius-pill);
   font-weight: 600;
   padding: 4px 16px;
   font-size: 0.875rem;
@@ -190,7 +262,7 @@ body {
   background: transparent;
 }
 
-.btn-linkedin-outline:hover { background: rgba(10, 102, 194, 0.05); }
+.btn-linkedin-outline:hover { background: rgba(37, 87, 167, 0.05); }
 
 /* Stepper / Timeline */
 .stepper-progress {

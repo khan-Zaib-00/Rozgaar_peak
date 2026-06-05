@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Messaging | RozgaarSphere{% endblock %}
 {% block content %}
-<div class="card-linkedin p-0" style="height: calc(100vh - 120px); display: flex;">
+<div class="indeed-card p-0" style="height: calc(100vh - 120px); display: flex;">
     <!-- Contacts Sidebar -->
     <div style="width: 260px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column;" class="d-none d-md-flex">
         <div class="p-3 border-bottom">
@@ -50,7 +50,7 @@
                 {% if chat_messages %}
                     {% for msg in chat_messages %}
                         <div class="d-flex {{ 'justify-content-end' if msg.sender_id == session['user_id'] else 'justify-content-start' }} mb-3">
-                            <div class="p-2 px-3 rounded-pill shadow-sm" style="max-width: 75%; {{ 'background-color: var(--linkedin-blue); color: white;' if msg.sender_id == session['user_id'] else 'background-color: var(--bg-hover); color: var(--text-primary);' }}">
+                            <div class="p-2 px-3 rounded-pill shadow-sm" style="max-width: 75%; {{ 'background-color: var(--indeed-blue); color: white;' if msg.sender_id == session['user_id'] else 'background-color: var(--bg-hover); color: var(--text-primary);' }}">
                                 <div class="small">{{ msg.content }}</div>
                             </div>
                         </div>
@@ -65,8 +65,8 @@
 
             <div class="p-3 border-top">
                 <div class="d-flex gap-2 align-items-center">
-                    <textarea id="msg-content" class="form-control border-0 bg-hover" placeholder="Type a message..." rows="1" style="resize: none; border-radius: var(--radius-pill); padding: 10px 20px; color: var(--text-primary);"></textarea>
-                    <button id="send-btn" class="btn btn-linkedin-primary rounded-circle" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
+                    <textarea id="msg-content" class="form-control border-0 bg-hover" placeholder="Type a message..." rows="1" style="resize: none; border-radius: var(--radius-pill); padding: 10px 20px; color: var(--text-primary); border: 1px solid var(--border-color) !important;"></textarea>
+                    <button id="send-btn" class="indeed-btn-primary rounded-circle" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; padding: 0;">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
@@ -105,7 +105,7 @@
                 const msgDiv = document.createElement('div');
                 msgDiv.className = 'd-flex justify-content-end mb-3 animate-fade-in';
                 msgDiv.innerHTML = `
-                    <div class="p-2 px-3 rounded-pill shadow-sm" style="max-width: 75%; background-color: var(--linkedin-blue); color: white;">
+                    <div class="p-2 px-3 rounded-pill shadow-sm" style="max-width: 75%; background-color: var(--indeed-blue); color: white;">
                         <div class="small">${content}</div>
                     </div>`;
                 chatBox.appendChild(msgDiv);

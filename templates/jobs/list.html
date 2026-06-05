@@ -2,66 +2,75 @@
 {% block title %}Jobs | RozgaarSphere{% endblock %}
 {% block content %}
 
-<div class="card-linkedin p-3 mb-3">
-    <form method="GET" action="{{ url_for('jobs.list_jobs') }}" class="row g-2">
-        <div class="col-md-4">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-search text-muted"></i></span>
-                <input type="text" name="keyword" class="form-control border-start-0" value="{{ keyword }}" placeholder="Job title or skills...">
-            </div>
+<div class="row">
+    <!-- Left Sidebar for Filters -->
+    <div class="col-md-3">
+        <div class="indeed-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 small">Filter Results</h6>
+            <form method="GET" action="{{ url_for('jobs.list_jobs') }}" class="d-flex flex-column gap-3">
+                <div>
+                    <label class="form-label small fw-bold text-muted mb-1">Keywords</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-search text-muted"></i></span>
+                        <input type="text" name="keyword" class="form-control border-start-0" value="{{ keyword }}" placeholder="Title or skills...">
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label small fw-bold text-muted mb-1">Location</label>
+                    <select name="location" class="form-select form-select-sm">
+                        <option value="">All Locations</option>
+                        {% for loc in locations %}
+                            <option value="{{ loc }}" {% if loc == selected_location %}selected{% endif %}>{{ loc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label small fw-bold text-muted mb-1">Job Type</label>
+                    <select name="job_type" class="form-select form-select-sm">
+                        <option value="">All Types</option>
+                        <option value="full-time" {% if selected_job_type == 'full-time' %}selected{% endif %}>Full-time</option>
+                        <option value="part-time" {% if selected_job_type == 'part-time' %}selected{% endif %}>Part-time</option>
+                        <option value="remote" {% if selected_job_type == 'remote' %}selected{% endif %}>Remote</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label small fw-bold text-muted mb-1">Minimum Salary</label>
+                    <input type="number" name="min_salary" class="form-control form-control-sm" value="{{ min_salary }}" placeholder="e.g. 50000">
+                </div>
+                <button type="submit" class="indeed-btn-primary btn-sm w-100 mt-2">Find Jobs</button>
+            </form>
         </div>
-        <div class="col-md-3">
-            <select name="location" class="form-select form-select-sm">
-                <option value="">All Locations</option>
-                {% for loc in locations %}
-                    <option value="{{ loc }}" {% if loc == selected_location %}selected{% endif %}>{{ loc }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-2">
-            <select name="job_type" class="form-select form-select-sm">
-                <option value="">All Types</option>
-                <option value="full-time" {% if selected_job_type == 'full-time' %}selected{% endif %}>Full-time</option>
-                <option value="part-time" {% if selected_job_type == 'part-time' %}selected{% endif %}>Part-time</option>
-                <option value="remote" {% if selected_job_type == 'remote' %}selected{% endif %}>Remote</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <input type="number" name="min_salary" class="form-control form-control-sm" value="{{ min_salary }}" placeholder="Min Salary (PKR)">
-        </div>
-        <div class="col-md-1">
-            <button type="submit" class="btn btn-linkedin-primary btn-sm w-100"><i class="fa-solid fa-filter"></i></button>
-        </div>
-    </form>
-</div>
-
-<div class="card-feed">
-    <h6 class="fw-bold mb-3">Job Search Results</h6>
+    </div>
     
-    {% if jobs %}
-        {% for job in jobs %}
-        <div class="job-feed-item">
-            <div class="job-feed-logo text-center d-flex align-items-center justify-content-center" style="background:#f3f6f8; font-size: 1.5rem; color: #0a66c2;">
-                <i class="fa-solid fa-building"></i>
+    <!-- Main Job Feed -->
+    <div class="col-md-9">
+        <div class="indeed-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0" style="color: var(--indeed-text);">Job Search Results</h5>
+                <span class="text-muted small">{{ jobs|length }} jobs found</span>
             </div>
+            
+            {% if jobs %}
+        {% for job in jobs %}
+        <div class="job-feed-item align-items-center mb-3 p-3 border rounded transition-fast" style="border-color: var(--border-color);">
             <div class="job-feed-info">
-                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="job-feed-title">{{ job.title }}</a>
-                <div class="job-feed-company">{{ job.company_name }}</div>
-                <div class="job-feed-location text-muted small">{{ job.location }} &bull; {{ job.job_type.replace('-', ' ') | title }}</div>
+                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="fw-bold fs-5 text-decoration-none" style="color: var(--indeed-text);">{{ job.title }}</a>
+                <div class="mt-1 fw-bold text-muted" style="font-size: 0.9rem;">{{ job.company_name }}</div>
+                <div class="text-muted small">{{ job.location }} &bull; {{ job.job_type.replace('-', ' ') | title }}</div>
                 
                 {% if job.salary %}
-                <div class="mt-1 small fw-bold text-success">
+                <div class="mt-2 small fw-bold px-2 py-1 bg-light d-inline-block rounded text-muted">
                     PKR {{ "{:,.0f}".format(job.salary|float) }} / month
                 </div>
                 {% endif %}
                 
-                <div class="mt-2">
-                    <span class="badge-remote"><i class="fa-solid fa-bolt"></i> Easy Apply</span>
-                    <span class="ms-2 extra-small text-muted">Promoted</span>
+                <div class="mt-3">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 me-2"><i class="fa-solid fa-bolt me-1"></i> Easy Apply</span>
+                    <span class="extra-small text-muted">Promoted</span>
                 </div>
             </div>
-            <div class="d-flex flex-column gap-2">
-                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="btn-linkedin-outline">Details</a>
+            <div class="ms-auto d-none d-md-block">
+                <a href="{{ url_for('jobs.job_details', job_id=job.id) }}" class="indeed-btn-outline">View Job</a>
             </div>
         </div>
         {% endfor %}
@@ -89,16 +98,18 @@
     {% else %}
         <div class="text-center py-5">
             <i class="fa-solid fa-magnifying-glass text-muted mb-3" style="font-size: 3rem;"></i>
-            <h6 class="text-muted">No jobs match your search.</h6>
-            <p class="small text-muted">Try different keywords or locations.</p>
-            <a href="{{ url_for('jobs.list_jobs') }}" class="btn btn-outline-secondary btn-sm">Clear Filters</a>
+            <h5 class="text-muted fw-bold">No jobs match your search.</h5>
+            <p class="small text-muted mb-4">Try different keywords or locations.</p>
+            <a href="{{ url_for('jobs.list_jobs') }}" class="indeed-btn-outline">Clear Filters</a>
         </div>
     {% endif %}
+        </div>
+    </div>
 </div>
 
 <style>
-    .extra-small { font-size: 0.65rem; }
-    .form-select-sm, .form-control-sm { font-size: 0.8rem; }
+    .extra-small { font-size: 0.75rem; }
+    .job-feed-item:hover { border-color: var(--indeed-blue) !important; box-shadow: var(--shadow-sm); }
 </style>
 
 {% endblock %}
