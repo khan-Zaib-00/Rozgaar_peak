@@ -287,10 +287,10 @@
 
         toggleSwitch.addEventListener('change', switchTheme, false);
 
-        // Real-time Notifications
-        const socket = io();
+        // Real-time Notifications - polling only (PythonAnywhere doesn't support WebSockets)
+        const socket = io({ transports: ['polling'] });
         socket.on('connect', () => {
-            console.log('Connected to server via Socket.io');
+            console.log('Connected to server via Socket.io (polling)');
             socket.emit('join', {});
         });
 

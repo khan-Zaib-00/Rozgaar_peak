@@ -33,7 +33,8 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'noreply@ro
 
 mail = Mail(app)
 if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-    socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+    # PythonAnywhere does NOT support WebSockets - must disable upgrades and use polling only
+    socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', allow_upgrades=False, transports=['polling'])
 else:
     socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
@@ -59,9 +60,11 @@ app.register_blueprint(messages_bp)
 
 @app.errorhandler(Exception)
 def handle_generic_error(e):
+    app.logger.error(f"Unhandled exception: {e}")
     if 'sqlite' in str(type(e)).lower() or 'database' in str(e).lower():
         return render_template('error.html', message="Database connection failed."), 500
-    raise e
+    # Don't re-raise — return a safe error page instead of crashing the WSGI worker
+    return render_template('error.html', message="An unexpected error occurred. Please try again."), 500
 
 from models.schema import db, Job, Profile, Company
 from flask import g
